@@ -19,15 +19,21 @@
 <body class="light-primary-color" unload="deviceSync()">
 
 	<div class="ourrss-header">
-		<h3>OurRSS</h3>
+		<h3>
+			<img src="img/icon.png" />urRSS</h3>
 		<i>An open RSS player built with open web standards openly...</i>
 	</div>
 
-	<br/><br/><br/><br/><br/><br/>
+	<br/>
+	<br/>
+	<br/>
+	<br/>
+	<br/>
+	<br/>
 
 	<ourrss-listen></ourrss-listen>
 
-	<input id="url" />
+	<input id="url" placeholder="Audio Feed URL" />
 	<br/>
 	<button id="getter">Get Feed</button>
 
@@ -57,7 +63,7 @@
 
 		const url = document.getElementById('url').value;
 
-		if(!url){
+		if (!url) {
 			console.error('No URL provided')
 			return false;
 		}
@@ -83,7 +89,7 @@
 
 				for (let i = audio.feeds.length - 1; i--;) {
 					console.log(audio.feeds[i].title, ' VS ', rss.title)
-					if (audio.feeds[i].title == rss.title || !audio.feeds[i].title) {
+					if (audio.feeds[i].title == rss.title || audio.feeds[i].title == 'Hound Tall') {
 						console.log('b4 ', audio.feeds.length)
 						audio.feeds.splice(i, 1);
 						console.log('after ', audio.feeds.length)
@@ -115,25 +121,12 @@
 
 	}
 
-	const cacheImg = localStorage['audioImg']
-	const cacheSrc = localStorage['audioFeed']
-	const cacheName = localStorage['audioName']
-	const cacheTime = localStorage['audioTime']
-
-	console.log(`
-		cacheImg(${cacheImg}); 
-		cacheSrc(${cacheSrc}); 
-		cacheName(${cacheName}); 
-		cacheTime(${cacheTime}); 
-	`)
-
-	if(cacheName){
-		const player = document.querySelector('ourrss-player')
-		player.setAttribute('name', cacheName)
-		player.setAttribute('src', cacheSrc)
-		player.setAttribute('image', cacheImg)
-		player.setAttribute('time', cacheTime)
-	}
+	const player = document.querySelector('ourrss-player')
+	player.setAttribute('name', localStorage['audioName'])
+	player.setAttribute('src', localStorage['audioFeed'])
+	player.setAttribute('image', localStorage['audioImg'])
+	player.setAttribute('time', localStorage['audioTime'])
+	player.setAttribute('title', localStorage['audioTitle'])
 
 </script>
 

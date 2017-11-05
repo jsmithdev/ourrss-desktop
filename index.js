@@ -2,14 +2,13 @@
 "use strict ";
 
 const electron = require('electron');
+const Promise = require('promise');
+const path = require('path');
 
 const ipc = require('electron').ipcMain;
 
-const Promise = require('promise');
-
-
 const getFeed = require('rss-to-json');
-const getRSS = (feed) => new Promise((res,rej) => getFeed.load(feed, (e, rss) => e ? rej(e) : res(rss)));
+const getRSS = (feed) => new Promise((res, rej) => getFeed.load(feed, (e, rss) => e ? rej(e) : res(rss)));
 
 const app = electron.app;
 
@@ -29,8 +28,9 @@ function onClosed() {
 
 function createMainWindow() {
 	const win = new electron.BrowserWindow({
-		width: 1500,
-		height: 1000
+		width: 650,
+		height: 800,
+		icon: path.join(__dirname, 'img/icon.png')
 	});
 
 	win.loadURL(`file://${__dirname}/index.html`);
@@ -56,27 +56,39 @@ app.on('ready', () => {
 
 });
 
-const message = (x) => {
+const message = (mess) => {
 
 	const Message = require('electron-notify');
-	
+
 	Message.setConfig({
 		appIcon: path.join(__dirname, 'img/icon.png'),
 		displayTime: 6000
 	});
-	Message.notify({ title: 'What\'s happening...', text: x });
+	Message.notify({
+		title: mess.head,
+		text: mess.body
+	});
+
+	return 'sent'
 }
+ipc.on('message', function (event, mess) {
+	const mail = message(mess)
+	event.sender.send('mailSent', mail)
+});
+
 
 
 ipc.on('getFeed', function (event, url) {
 
-	console.log(`Get feed in controller`);	
-	
+	console.log(`Get feed in controller`);
+
 	getRSS(url)
 		.then(x => {
-			event.sender.send('getFeedRes', x)
-			message('Got Feed! Yasss')
+			console.log(x.image)
+			if(x.image){
+				message('Got Feed! Yasss')
+				event.sender.send('getFeedRes', x)
+			}
 		})
-		.catch(e => app.message(e))
+		.catch(e => message(e))
 });
-
