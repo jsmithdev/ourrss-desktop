@@ -1,5 +1,7 @@
-# ourrss-electron
-### An open RSS player built with open web standards openly...
+# OurRSS-Electron
+### An open RSS player built with open web standards openly... (WIP)
+
+![OurRSS-Electron Screenie](https://i.imgur.com/HUyPAG3.png "OurRSS-Electron Screenie")
 
 ## State 
 > (very) Work In Progress
