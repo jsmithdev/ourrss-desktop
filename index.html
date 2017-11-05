@@ -1,0 +1,174 @@
+<!doctype html>
+<html>
+
+<head>
+
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes" />
+	<title>OurRSS</title>
+
+	<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" />
+	<link rel="stylesheet" href="index.css" />
+
+	<link href="components/ourrss-player/ourrss-player.html" rel="import" />
+	<link href="components/ourrss-listen/ourrss-listen.html" rel="import" />
+
+</head>
+
+
+<body class="light-primary-color" unload="deviceSync()">
+
+	<div class="ourrss-header">
+		<h3>OurRSS</h3>
+		<i>An open RSS player built with open web standards openly...</i>
+	</div>
+
+	<br/><br/><br/><br/><br/><br/>
+
+	<ourrss-listen></ourrss-listen>
+
+	<input id="url" />
+	<br/>
+	<button id="getter">Get Feed</button>
+
+	<ourrss-player volume="" expand="" name="" time="" type="" title="" src="" image="" play=""></ourrss-player>
+
+
+
+</body>
+
+<script>
+	const ipc = require('electron').ipcRenderer;
+
+	const action = document.getElementById('getter')
+
+
+
+
+
+	action.onclick = () => {
+		getFeed();
+	}
+
+
+	const getFeed = () => {
+
+		console.log(`get feed renderer...`);
+
+		const url = document.getElementById('url').value;
+
+		if(!url){
+			console.error('No URL provided')
+			return false;
+		}
+
+		console.log(`Getting feed: ${url}`);
+		ipc.send('getFeed', url);
+		ipc.once('getFeedRes', function (event, rss) {
+
+			console.log(`Got Feed!`);
+			console.dir(rss)
+
+			const store = new Store();
+
+			if (!store.get('audio')) {
+				const audio = {}
+				audio.feeds = []
+				store.set('audio', audio)
+			}
+
+			const audio = store.get('audio')
+
+			if (audio.feeds.length) {
+
+				for (let i = audio.feeds.length - 1; i--;) {
+					console.log(audio.feeds[i].title, ' VS ', rss.title)
+					if (audio.feeds[i].title == rss.title || !audio.feeds[i].title) {
+						console.log('b4 ', audio.feeds.length)
+						audio.feeds.splice(i, 1);
+						console.log('after ', audio.feeds.length)
+
+					}
+				}
+
+				audio.feeds.push(rss)
+
+				store.set('audio', audio)
+			} else {
+				audio.feeds.push(rss)
+				store.set('audio', audio)
+			}
+
+			console.dir(audio)
+
+
+
+			// store.get('unicorn')
+
+			// // Use dot-notation to access nested properties
+			// store.set('foo.bar', true);
+			// console.log(store.get('foo'));
+
+			// store.delete('unicorn');
+			// console.log(store.get('unicorn'));
+		})
+
+	}
+
+	const cacheImg = localStorage['audioImg']
+	const cacheSrc = localStorage['audioFeed']
+	const cacheName = localStorage['audioName']
+	const cacheTime = localStorage['audioTime']
+
+	console.log(`
+		cacheImg(${cacheImg}); 
+		cacheSrc(${cacheSrc}); 
+		cacheName(${cacheName}); 
+		cacheTime(${cacheTime}); 
+	`)
+
+	if(cacheName){
+		const player = document.querySelector('ourrss-player')
+		player.setAttribute('name', cacheName)
+		player.setAttribute('src', cacheSrc)
+		player.setAttribute('image', cacheImg)
+		player.setAttribute('time', cacheTime)
+	}
+
+</script>
+
+
+
+
+<!-- for demo purpose. this would be done by other mechanics -->
+<!-- <script>
+		(() => {
+			document.querySelector('ourrss-player').setAttribute('name', 'The Dollop')
+			document.querySelector('ourrss-player').setAttribute('title', '263 - The Texas Hypnocult (Live in Austin)')
+			document.querySelector('ourrss-player').setAttribute('src',
+				'https://traffic.libsyn.com/thedollop/Terri_Lee_Hoffman.mp3')
+			document.querySelector('ourrss-player').setAttribute('image',
+				'"https://static.libsyn.com/p/assets/6/a/9/6/6a96a1557e801d14/Dollop_small_square_1.jpg"')
+			document.querySelector('ourrss-player').setAttribute('type', 'audio/mpeg')
+			document.querySelector('ourrss-player').setAttribute('time', '10')
+			document.querySelector('ourrss-player').setAttribute('volume', '1')
+			document.querySelector('ourrss-player').setAttribute('id', '-KkiQrg6p5IUg9lCGtC1')
+			//document.querySelector('ourrss-player').setAttribute('play', true)
+		})();
+	
+	</script> -->
+
+
+</html>
+<!-- 
+
+	Written with
+	<svg class="heart" viewBox="0 0 32 29.6">
+		<path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2
+						c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z" />
+	</svg>
+	by
+	<a href="//jamiesmiths.com" target="_blank">Jamie Smith</a>
+
+
+ -->
