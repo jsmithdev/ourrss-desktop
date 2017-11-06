@@ -1,0 +1,593 @@
+<dom-module id="ourrss-player">
+	<template>
+		
+		<style>
+			
+			:host {
+				font-family: 'Ubuntu', sans-serif;
+				user-select: none;
+			}
+			
+			
+			:host section {
+				z-index: 100;
+				position: fixed;
+				bottom: 0px;
+				width: 100%;
+				opacity: .9;
+				height:5.5rem;
+    			box-shadow: 0px 2px 4px 0 rgba(0, 0, 0, 0.2), 0px -4px 10px 0px rgba(0, 0, 0, 0.2);
+			}
+			:host section.expand {
+				position: fixed;
+				bottom: 0px;
+				width: 100%;
+				opacity: .9;
+				height:11rem;
+			}
+			
+			:host #titlePlaying {
+				margin-top: 1rem;
+				vertical-align: middle;
+				cursor: default;
+				overflow: hidden;
+			}
+			
+			
+			:host #expand {
+				transition: all .3s ease-out;
+				user-select: none;
+			    margin-right: 0rem;
+			    max-width: 3.5rem;
+			}
+			:host #expand.expand {
+				-o-transform: rotate(-180deg);
+				-ms-transform: rotate(-180deg);
+				-moz-transform: rotate(-180deg);
+				-webkit-transform: rotate(-180deg);
+				transform: rotate(-180deg);
+			}
+			
+			
+			:host .inline-player {
+				width: 100%;
+				margin: auto;
+				text-align: center;
+			    padding: .4rem 0 .4rem 0;
+			}
+			
+			:host .playcont {
+				margin: auto;
+			}
+			
+			:host #playdiv {
+				width: 4rem;
+				height: 4rem;
+				background-size: 4rem;
+				background-repeat: no-repeat;
+				display: inline-block;
+			}
+			
+			
+			:host #buffered {
+				height: 20px;
+				position: relative;
+				background: #555;
+				width: 100%;
+			}
+			
+			:host #bufferedAmount {
+				/*display: block;*/
+				height: 100%;
+				width: 0px;
+			}
+			
+			:host #progress {
+				margin-top: -20px;
+				height: 20px;
+				position: relative;
+				width: 100%;
+			}
+			
+			:host #progressAmount {
+				white-space: nowrap;
+				display: block;
+				height: 100%;
+				width: 0px;
+			}
+			
+			:host #settings {
+				-webkit-transition: all 0.5s ease-in-out;
+				-moz-transition: all 0.5s ease-in-out;
+				-o-transition: all 0.5s ease-in-out;
+				transition: all 0.5s ease-in-out;
+				user-select: none;
+			}
+			
+			:host #settings.rotated {
+				-webkit-transform: rotate(66deg);
+				-moz-transform: rotate(66deg);
+				-ms-transform: rotate(66deg);
+				-o-transform: rotate(66deg);
+				transform: rotate(66deg);
+			}
+			
+			:host .small-icon {
+				user-select: none;
+				width: 20%;
+				height: auto;
+			}
+			:host .medium-icon {
+				user-select: none;
+				width: 25%;
+				height: auto;
+			}
+			:host .large-icon {
+				width: 60%;
+				max-width:4rem;
+				height: auto;
+				padding: .5rem 0 .5rem 0;
+			}
+			
+			
+			:host .center {
+				text-align: center;
+			}
+			:host .hide {
+				display: none;
+			}
+			:host .spacer {
+				user-select: none;
+			}
+			:host .circle {
+				border-radius: 50%;
+			}
+			:host .left {
+				float: left;
+			}
+			:host .right {
+				float: right;
+			}
+			:host .max4 {
+				max-width: 4rem;
+			}
+			
+			
+			:host .volume {
+				vertical-align: middle;
+			    display: inline-block;
+			    padding-top: 7%;
+			    width:100%;
+			}
+			:host input[type=range] {
+				-webkit-appearance: none;
+				max-width:129px;
+			}
+			:host input[type=range]:focus {
+				outline: none;
+			}
+			:host input[type=range]::-webkit-slider-runnable-track {
+				width: 100%;
+				height: auto;
+				cursor: pointer;
+				background: #555;
+				border-radius: 0px;
+				border: 0px solid #010101;
+			}
+			:host input[type=range]::-webkit-slider-thumb {
+				box-shadow: 0px 0px 1px #670000, 0px 0px 0px #810000;
+				border: 0px solid #b3e5fc;
+				height: 2rem;
+				width: 1rem;
+				border-radius: 0px;
+				background: #b3e5fc;
+				cursor: pointer;
+				-webkit-appearance: none;
+			}
+			:host input[type=range]:focus::-webkit-slider-runnable-track {
+				background: #545a5a;
+			}
+			:host input[type=range]::-moz-range-track {
+				width: 100%;
+				height: 2rem;
+				cursor: pointer;
+				background: #484d4d;
+				border-radius: 0px;
+				border: 0px solid #010101;
+			}
+			:host input[type=range]::-ms-track {
+				width: 100%;
+				height: 2rem;
+				cursor: pointer;
+				background: transparent;
+				border-color: transparent;
+				color: transparent;
+			}
+			:host input[type=range]::-ms-fill-lower {
+				background: #3c4040;
+				border: 0px solid #010101;
+				border-radius: 0px;
+				box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+			}
+			:host input[type=range]::-ms-fill-upper {
+				background: #484d4d;
+				border: 0px solid #010101;
+				border-radius: 0px;
+				box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+			}
+			:host input[type=range]:focus::-ms-fill-lower {
+				background: #484d4d;
+			}
+			:host input[type=range]:focus::-ms-fill-upper {
+				background: #545a5a;
+			}
+			
+			:host svg {
+				cursor: pointer;
+			}
+			
+			:host .grid:after {
+				content: "";
+				display: table;
+				clear: both;
+			}
+			:host [class*='col-'] {
+				float: left;
+			}
+			
+			:host .col-1-4,
+			:host .col-2-4,
+			:host .col-3-4,
+			:host .col-4-4 {
+				width: 25%;
+			}
+			
+			:host .col-1-3 {
+				width: 13%;
+			}
+			:host .col-2-3 {
+				width: 75%;
+			}
+			:host .col-3-3 {
+				width: 10%;
+			}
+			
+			:host .dark-primary-color {
+				background: #0288D1;
+			}
+			:host .default-primary-color {
+				background: #03A9F4;
+			}
+			:host .light-primary-color {
+				background: #B3E5FC;
+			}
+			:host .text-primary-color {
+				color: #FFFFFF;
+			}
+			:host .accent-color {
+				background: #FF4081;
+			}
+			:host .primary-text-color {
+				color: #212121;
+			}
+			:host .secondary-text-color {
+				color: #757575;
+			}
+			:host .divider-color {
+				border-color: #BDBDBD;
+			}
+		</style>
+		
+		<section id="section" class="dark-primary-color ">
+			<div class="grid">
+				
+				<div class="col-1-3 ">
+					&nbsp;
+					<span class="volume" style="display:none">
+						<svg id="mute" class="small-icon" viewBox="0 0 24 24" >
+							<path class="path" fill="#B3E5FC" d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"></path>
+						</svg>
+						<input id="volume" type="range" min="0" max="1" step="0.01" value="1"></input>
+					</span>
+				</div>
+		
+				<div class="col-2-3 center">
+					<div class="inline-player">
+		
+						<div class=" playcont">
+		
+							<svg id="back" class="medium-icon max4" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet">
+								<path class="path" fill="#B3E5FC" d="M12 5V1L7 6l5 5V7c3.3 0 6 2.7 6 6s-2.7 6-6 6-6-2.7-6-6H4c0 4.4 3.6 8 8 8s8-3.6 8-8-3.6-8-8-8zm-2.4 8.5h.4c.2 0 .4-.1.5-.2s.2-.2.2-.4v-.2s-.1-.1-.1-.2-.1-.1-.2-.1h-.5s-.1.1-.2.1-.1.1-.1.2v.2h-1c0-.2 0-.3.1-.5s.2-.3.3-.4.3-.2.4-.2.4-.1.5-.1c.2 0 .4 0 .6.1s.3.1.5.2.2.2.3.4.1.3.1.5v.3s-.1.2-.1.3-.1.2-.2.2-.2.1-.3.2c.2.1.4.2.5.4s.2.4.2.6c0 .2 0 .4-.1.5s-.2.3-.3.4-.3.2-.5.2-.4.1-.6.1c-.2 0-.4 0-.5-.1s-.3-.1-.5-.2-.2-.2-.3-.4-.1-.4-.1-.6h.8v.2s.1.1.1.2.1.1.2.1h.5s.1-.1.2-.1.1-.1.1-.2v-.5s-.1-.1-.1-.2-.1-.1-.2-.1h-.6v-.7zm5.7.7c0 .3 0 .6-.1.8l-.3.6s-.3.3-.5.3-.4.1-.6.1-.4 0-.6-.1-.3-.2-.5-.3-.2-.3-.3-.6-.1-.5-.1-.8v-.7c0-.3 0-.6.1-.8l.3-.6s.3-.3.5-.3.4-.1.6-.1.4 0 .6.1.3.2.5.3.2.3.3.6.1.5.1.8v.7zm-.8-.8v-.5c0-.1-.1-.2-.1-.3s-.1-.1-.2-.2-.2-.1-.3-.1-.2 0-.3.1l-.2.2s-.1.2-.1.3v2s.1.2.1.3.1.1.2.2.2.1.3.1.2 0 .3-.1l.2-.2s.1-.2.1-.3v-1.5z"></path>
+							</svg>
+							
+							<div id="playdiv" class="circle">
+								<svg id="play" class="max4  active" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet">
+									<path class="path" fill="#B3E5FC" stroke="black" stroke-opacity="0.5"  d="M8 5v14l11-7z"></path>
+								</svg>
+		
+								<svg id="pause" class="max4 hide" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet">
+									<path class="path" fill="#B3E5FC" stroke="black" stroke-opacity="0.5" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path>
+								</svg>
+							</div>
+						
+							<svg id="forward" class="medium-icon max4" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet">
+								<path class="path" fill="#B3E5FC" d="M9.6 13.5h.4c.2 0 .4-.1.5-.2s.2-.2.2-.4v-.2s-.1-.1-.1-.2-.1-.1-.2-.1h-.5s-.1.1-.2.1-.1.1-.1.2v.2h-1c0-.2 0-.3.1-.5s.2-.3.3-.4.3-.2.4-.2.4-.1.5-.1c.2 0 .4 0 .6.1s.3.1.5.2.2.2.3.4.1.3.1.5v.3s-.1.2-.1.3-.1.2-.2.2-.2.1-.3.2c.2.1.4.2.5.4s.2.4.2.6c0 .2 0 .4-.1.5s-.2.3-.3.4-.3.2-.5.2-.4.1-.6.1c-.2 0-.4 0-.5-.1s-.3-.1-.5-.2-.2-.2-.3-.4-.1-.4-.1-.6h.8v.2s.1.1.1.2.1.1.2.1h.5s.1-.1.2-.1.1-.1.1-.2v-.5s-.1-.1-.1-.2-.1-.1-.2-.1h-.6v-.7zm5.7.7c0 .3 0 .6-.1.8l-.3.6s-.3.3-.5.3-.4.1-.6.1-.4 0-.6-.1-.3-.2-.5-.3-.2-.3-.3-.6-.1-.5-.1-.8v-.7c0-.3 0-.6.1-.8l.3-.6s.3-.3.5-.3.4-.1.6-.1.4 0 .6.1.3.2.5.3.2.3.3.6.1.5.1.8v.7zm-.9-.8v-.5s-.1-.2-.1-.3-.1-.1-.2-.2-.2-.1-.3-.1-.2 0-.3.1l-.2.2s-.1.2-.1.3v2s.1.2.1.3.1.1.2.2.2.1.3.1.2 0 .3-.1l.2-.2s.1-.2.1-.3v-1.5zM4 13c0 4.4 3.6 8 8 8s8-3.6 8-8h-2c0 3.3-2.7 6-6 6s-6-2.7-6-6 2.7-6 6-6v4l5-5-5-5v4c-4.4 0-8 3.6-8 8z"></path>
+							</svg>
+		
+						</div>
+		
+					</div>
+				</div>
+		
+				<div class="col-3-3">
+					<svg id="expand" class="" viewBox="0 0 24 24"> 
+						<path class="path" fill="#B3E5FC" d="M13,20H11V8L5.5,13.5L4.08,12.08L12,4.16L19.92, 12.08L18.5,13.5L13,8V20Z"></path>
+					</svg>
+				</div>
+			</div>
+			
+			<!-- <audio> gets it's data from components attributes via component class -->
+			<audio id="audio" class="hide" ></audio>
+		
+			<div id="drawer">
+				
+				<div id="buffered" class="accent-color ">
+					<span id="bufferedAmount"></span>
+				</div>
+				<div id="progress" style="width: 100%">
+					<span id="progressAmount" class="light-primary-color"></span>
+				</div>
+				
+				<div class="grid center">
+		
+					<div class="col-1-4">
+						<!-- href="#addToOurRSSModal" -->
+						<svg id="addToOurRSS" class="modal-trigger large-icon" viewBox="0 0 24 24">
+							<path id="path" fill="#B3E5FC" d="M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z" />
+						</svg>
+					</div>
+		
+					<div class="col-2-4">
+						<svg id="chromecast" class="large-icon" viewBox="0 0 24 24">
+							<path id="path" fill="#B3E5FC" d="M1,10V12A9,9 0 0,1 10,21H12C12,14.92 7.07,10 1,10M1,14V16A5,5 0 0,1 6,21H8A7,7 0 0,0 1,14M1,18V21H4A3,3 0 0,0 1,18M21,3H3C1.89,3 1,3.89 1,5V8H3V5H21V19H14V21H21A2,2 0 0,0 23,19V5C23,3.89 22.1,3 21,3Z" />
+						</svg>
+		
+						<svg id="chromecastOn" class="hide large-icon" viewBox="0 0 24 24">
+							<path id="path" fill="#B3E5FC" d="M21,3H3C1.89,3 1,3.89 1,5V8H3V5H21V19H14V21H21A2,2 0 0,0 23,19V5C23,3.89 22.1,3 21,3M1,10V12A9,9 0 0,1 10,21H12C12,14.92 7.07,10 1,10M19,7H5V8.63C8.96,9.91 12.09,13.04 13.37,17H19M1,14V16A5,5 0 0,1 6,21H8A7,7 0 0,0 1,14M1,18V21H4A3,3 0 0,0 1,18Z" />
+						</svg>
+					</div>
+					
+					<div class="col-3-4">
+						<svg id="radio" class="large-icon" viewBox="0 0 24 24">
+							<path id="path" fill="#B3E5FC" d="M20,6A2,2 0 0,1 22,8V20A2,2 0 0,1 20,22H4A2,2 0 0,1 2,20V8C2,7.15 2.53,6.42 3.28,6.13L15.71,1L16.47,2.83L8.83,6H20M20,8H4V12H16V10H18V12H20V8M7,14A3,3 0 0,0 4,17A3,3 0 0,0 7,20A3,3 0 0,0 10,17A3,3 0 0,0 7,14Z" />
+						</svg>
+					</div>
+		
+					<div class="col-4-4">
+						<!--href="#settingsModal" -->
+						<svg id="settings" class="large-icon modal-trigger" viewBox="0 0 24 24">
+							<path id="path" fill="#B3E5FC" d="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.67 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z" />
+						</svg>
+					</div>
+				</div>
+			</div>
+	</section>
+		
+	</template>
+
+	<script>
+
+		/*global HTMLElement navigator localStorage MediaMetadata*/
+		class OurrssPlayer extends HTMLElement {
+			
+			init() {
+				this.registerElements()
+			}
+			
+			setProperties(){
+				this.is = 'ourrss-player'
+			}
+			
+			// Fires when an instance was removed from the document.
+			detachedCallback() {
+				this.log('instance was removed.')
+			}
+		
+			// Fires when an attribute was added, removed, or updated.
+			attributeChangedCallback(attr, oldVal, newVal) {
+				
+				if(newVal){
+					// console.log(` ourrss-player attr changed 
+					// 	-attr: ${attr}
+					// 	-oldVal: ${oldVal}
+					// 	-newVal:${newVal}
+					// `)
+
+					if('name' == attr){
+						this.name = newVal
+						console.log('name ', this.name)
+					}
+
+					else if('title' == attr){
+						this.title = newVal
+					}
+
+					else if('type' == attr){
+						this.type.volume 
+					}
+
+					else if('volume' == attr){
+						this.dom.audio.volume 
+					}
+
+					else if('time' == attr){
+						this.dom.audio.currentTime = parseInt(newVal)
+					}
+
+					else if('src' == attr){
+						console.log('src >> ', newVal)
+						this.dom.audio.src = newVal
+						this.src = newVal
+					}				
+				
+					else if('image' == attr){
+						 this.image = newVal
+						 this.dom.playdiv.style.backgroundImage = `url(${this.image})`
+
+					}
+					
+					else if('play' == attr){
+						newVal ? this.dom.play.onclick() : this.dom.pause.onclick() 
+					}
+				}
+			}
+			
+			// Fires when an instance was inserted into the document.
+			attachedCallback() {
+				var template = this.owner.querySelector('template')
+				var clone = document.importNode(template.content, true)
+				this.root = this.createShadowRoot()
+				this.root.appendChild(clone)
+				this.init()
+				
+			}
+		
+			
+			// Fires when an instance of the element is created.
+			createdCallback() {
+				this.setProperties()
+				this.parseAttributes()
+
+				//console.log('instance was created.')
+			}
+			
+			parseAttributes() {
+				
+				this.name = this.getAttribute('name');
+				this.title = this.getAttribute('title');
+				this.image = this.getAttribute('image');
+				this.type = this.getAttribute('name');
+				this.volume = this.getAttribute('volume');
+				this.time = this.getAttribute('time');
+				this.src = this.getAttribute('src');
+
+				//this.something = parseInt(this.getAttribute('something'));
+			}
+			
+			registerElements() {
+				this.dom = {}
+				this.dom.section = this.root.getElementById('section')
+				this.dom.audio = this.root.getElementById('audio')
+				this.dom.volume = this.root.getElementById('volume')
+				this.dom.play = this.root.getElementById('play')
+				this.dom.pause = this.root.getElementById('pause')
+				this.dom.back = this.root.getElementById('back')
+				this.dom.forward = this.root.getElementById('forward')
+				this.dom.expand = this.root.getElementById('expand')
+				this.dom.playdiv = this.root.getElementById('playdiv')
+				this.dom.progress = this.root.getElementById('progress')
+				this.dom.buffer = this.root.getElementById('buffer')
+				this.dom.progressAmount = this.root.getElementById('progressAmount')
+				this.dom.bufferAmount = this.root.getElementById('bufferAmount')
+				
+				this.dom.paths = Array.from(this.root.querySelector('.path'))
+				
+				this.addListeners()
+			}
+			
+			addListeners(){
+				
+				this.dom.play.onclick = function()  {
+					
+					console.log('IN PLAYER CLICK SET SRC ')
+					console.dir(String(this.src))
+					console.dir(this)
+					
+					//Tweak UI
+					this.dom.playdiv.style.backgroundImage = 'url(' +this.image+ ')'
+					this.dom.play.classList.add('hide')
+					this.dom.pause.classList.remove('hide')
+					
+					//Mechanics
+					localStorage['audioTitle'] = String(this.title);
+					localStorage['audioImg'] = String(this.image);
+					localStorage['audioFeed'] = String(this.src);
+					localStorage['audioName'] = String(this.name);
+					//console.dir(this)
+
+					const mess = {}
+					mess.head = `Playing  Cast `
+					mess.body = `${this.name}. ${this.title}.`
+					ipc.send('message', mess);
+					ipc.once('getFeedRes', (event, data) => console.log('Mail ', data))
+					
+					// todo fix fail : src error via mobile
+					if ('mediaSession' in navigator) {
+						navigator.mediaSession.metadata = new MediaMetadata({
+							title: this.title,
+							artist: this.name,
+							artwork: [
+							  { src: this.image }
+							]
+						})
+						
+						navigator.mediaSession.setActionHandler('play', this.dom.play.click())
+						navigator.mediaSession.setActionHandler('pause', this.dom.pause.onclick());
+						navigator.mediaSession.setActionHandler('seekbackward', this.dom.back.onclick());
+						navigator.mediaSession.setActionHandler('seekforward', this.dom.forward.onclick());
+						//navigator.mediaSession.setActionHandler('previoustrack', function() {doSomthing()});
+						//navigator.mediaSession.setActionHandler('nexttrack', function() {doSomthing()});
+					}
+					console.dir(this.dom.audio)
+					
+					//setup player
+					this.dom.audio.play().catch(e => false)
+				}.bind(this)
+				
+				this.dom.pause.onclick = () => {
+					this.dom.audio.pause();
+					this.dom.play.classList.toggle('hide')
+					this.dom.pause.classList.toggle('hide')
+				}
+				
+				this.dom.expand.onclick = () => {
+				  this.dom.expand.classList.toggle('expand')
+				  this.dom.section.classList.toggle('expand')
+				}
+				
+				this.dom.forward.onclick = () => {
+				  this.setAttribute('time', parseInt(this.getAttribute('time')) + 30)
+				}
+				
+				this.dom.back.onclick = () => {
+				  this.setAttribute('time', parseInt(this.getAttribute('time')) - 30)
+				}
+				
+				this.dom.progress.addEventListener('click', (e) => {
+					this.setAttribute('time', e.pageX * (this.dom.audio.duration / window.innerWidth))
+				})
+				
+				this.dom.audio.addEventListener('timeupdate', () => {
+					const duration = this.dom.audio.duration;
+					if (duration > 0) {
+						this.dom.progressAmount.style.width = ((this.dom.audio.currentTime / duration) * 100) + "%";
+						localStorage['audioTime'] = String(this.dom.audio.currentTime);
+					}
+				})
+				
+				this.dom.volume.addEventListener('change', function(){
+					console.dir(this)
+					this.dom.audio.volume = this.dom.volume.value
+				}.bind(this))
+				
+				this.dom.paths.map(path => path.onclick = path.parentElement.onclick())
+			}
+			
+		}
+		
+		if (document.createElement('ourrss-player').constructor !== OurrssPlayer) {
+			OurrssPlayer.prototype.owner = (document._currentScript || document.currentScript).ownerDocument;
+			document.registerElement('ourrss-player', OurrssPlayer);
+		}
+	</script>
+</dom-module>

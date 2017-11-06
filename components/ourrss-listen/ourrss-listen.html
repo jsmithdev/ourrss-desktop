@@ -1,0 +1,429 @@
+<dom-module id="ourrss-listen">
+	<template>
+
+		<style>
+			:host {
+				user-select: none;
+				width: 100%;
+				height: 100%;
+			}
+
+			:host ::-webkit-scrollbar {
+				width: .5rem;
+			}
+
+			:host ::-webkit-scrollbar-thumb {
+				border-radius: 1rem;
+				-webkit-box-shadow: inset 0 0 6px #0288D1;
+			}
+
+			:host .grid-box {
+				display: flex;
+				flex-wrap: wrap;
+				flex: 1;
+			}
+
+			:host div:nth-child(n) {
+				margin: .5rem;
+			}
+			/* @media (max-width: 450px) {
+				:host ::-webkit-scrollbar {
+					display: none;
+				}
+				:host ::-webkit-scrollbar-thumb {
+					display: none;
+				}
+				:host .grid-box {
+					display: grid;
+					grid-gap: 1rem;
+					padding: 1rem 1rem 6.5rem 1rem;
+					grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+				}
+			} */
+			/*:host .box:nth-child(even) {
+				background-color: #EEE;
+				color: #000;
+			}*/
+
+			:host .enc {
+
+				transition: all 0.5s ease-in-out;
+				font-size: 1rem;
+				font-family: Ubuntu;
+				border: 1pt solid #afe0f6;
+				vertical-align: middle;
+				color: slategrey;
+				padding: 1rem 0rem 1rem 0rem;
+			}
+
+			:host .card {
+
+				width: 10rem;
+				height: 10rem;
+				background-color: #FFF;
+				color: #212121;
+				font-size: 150%;
+				text-align: center;
+				box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+				transition: all 0.2s ease-in-out;
+
+				cursor: pointer;
+			}
+
+			:host .card:hover {
+				cursor: pointer;
+				box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4), 0 6px 20px 0 rgba(0, 0, 0, 0.38);
+			}
+
+			:host .card-active {
+				transition: all .1s ease-in-out;
+				height: 100%;
+				width: 100%;
+				z-index: 90;
+				margin-top: 6rem !important;
+			}
+
+			:host .card-body {
+				transition: all 0.5s ease-in-out;
+				text-align: center;
+				height: 100%;
+				width: auto;
+				display: none;
+			}
+
+			:host .card-active>.card-body {
+				text-align: center;
+				margin-top: 2.5rem;
+				height: 100%;
+				width: auto;
+				display: block;
+			}
+
+
+			:host .card-img {
+				user-select: none;
+
+				transition: all 0.5s ease-in-out;
+				width: 10rem;
+				height: 10rem;
+			}
+
+			:host .card-active>.card-img {
+
+				transform: scale(1.2);
+				margin-top: -11%;
+				border-radius: 50%;
+				box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.4), 0 6px 20px 0 rgba(0, 0, 0, 0.38);
+			}
+
+			:host ul {
+				-webkit-padding-start: 0rem;
+				-webkit-margin-end: 0rem;
+				list-style-type: none;
+				display: none;
+			}
+
+			:host .card-active ul {
+				display: block;
+			}
+
+		</style>
+
+		<div id="gridBox" class="grid-box">
+
+
+		</div>
+
+	</template>
+
+	<script>
+		const Store = require('electron-store')
+
+		/*global HTMLElement navigator localStorage MediaMetadata*/
+		class OurrssListen extends HTMLElement {
+
+			init() {
+				this.registerElements()
+			}
+
+			setProperties() {
+				this.is = 'ourrss-listen'
+			}
+
+			// Fires when an instance was removed from the document.
+			detachedCallback() {
+				this.log('instance was removed.')
+			}
+
+			// Fires when an attribute was added, removed, or updated.
+			attributeChangedCallback(attr, oldVal, newVal) {
+
+				// console.log(` ourrss-listen attr changed 
+				// 	-attr: ${attr}
+				// 	-oldVal: ${oldVal}
+				// 	-newVal:${newVal}
+				// `)
+
+				if (newVal) {
+
+
+					//'src' == attr ? this.dom.audio.src = newVal : ''
+				}
+			}
+
+			// Fires when an instance was inserted into the document.
+			attachedCallback() {
+				var template = this.owner.querySelector('template')
+				var clone = document.importNode(template.content, true)
+				this.root = this.createShadowRoot()
+				this.root.appendChild(clone)
+				this.init()
+			}
+
+
+			// Fires when an instance of the element is created.
+			createdCallback() {
+				this.setProperties()
+				this.parseAttributes()
+
+				// //console.log('instance was created.')
+			}
+
+			parseAttributes() {
+
+				//this.name = this.getAttribute('name');
+
+				//this.something = parseInt(this.getAttribute('something'));
+			}
+
+			registerElements() {
+				this.dom = {}
+				this.dom.gridBox = this.root.querySelector('.grid-box')
+				this.dom.boxes = Array.from(this.root.children.gridBox.children)
+				this.dom.cards = Array.from(this.root.querySelectorAll('.card'))
+				this.dom.player = this.root.querySelector('ourrss-player')
+
+				this.addListeners()
+
+			}
+
+			addListeners() {
+
+
+				this.ready()
+			}
+
+			ready() {
+
+				const store = new Store();
+
+				const audio = store.get('audio')
+
+				console.log(`ourrss-listen is ready. Making cards`)
+
+
+				audio.feeds.map(x => {
+					console.dir(audio)
+					this.mkCard(x)
+				})
+
+			}
+
+			mkCard(feed) {
+
+
+				console.log('making card with ITEMS >>>>')
+				console.dir(feed.items)
+
+				let lines = ''
+
+				feed.items.map(x => {
+					if (x.enclosures) {
+						lines +=
+							`<li class="enc" data-name="${feed.name}" data-title="${x.title}" data-audio="${x.enclosures[0].url}" title="${x.description}">
+								${x.title}<br/>${new Date(x.created).toDateString()}
+							</li>`
+					}
+					// else {
+					// 	console.error(x)
+					// }
+				});
+
+				const card = document.createElement('div')
+				card.classList.add('card')
+
+
+
+
+				card.innerHTML +=
+					`<img draggable="false" class="card-img" src="${feed.image}"  />
+
+					<div class="card-body">
+						
+						${feed.title}
+						<ul>
+							${lines}
+						</ul>
+					</div>
+				`;
+
+				card.onclick = (e) => {
+
+					this.dom.cards.map(x => x.classList.remove('card-active'))
+
+					let card = e.target
+					console.dir(card)
+
+					if (card.tagName.toLowerCase() === 'li') {
+						console.log('was a li.enc click to play an episode')
+
+						const elem = card
+						card = card.parentElement.parentElement.parentElement
+						const image = card.querySelector('.card-img')
+
+						//card.parentElement.style.display = 'block'
+
+						const PLAYER = e.path[9].querySelector('ourrss-player')
+						console.log(elem.dataset)
+						PLAYER.setAttribute('image', image.src)
+						PLAYER.setAttribute('src', elem.dataset.audio)
+						PLAYER.setAttribute('name', elem.dataset.name)
+						PLAYER.setAttribute('title', elem.dataset.title)
+						PLAYER.setAttribute('play', true)
+
+
+					}
+
+					if (!card.classList.contains('card')) {
+						card = e.target.parentElement
+					}
+
+					const img = card.querySelector('img')
+					const body = card.querySelector('.card-body')
+
+					if (card.classList.contains('card-active')) {
+
+						card.classList.remove('card-active')
+
+					} else {
+
+						card.classList.add('card-active')
+
+					}
+
+
+				}
+
+				this.dom.gridBox.appendChild(card)
+			}
+
+			// mkCard(aCasts) {
+			// 	console.dir(aCasts)
+			// 	let name = aCasts.title
+			// 	let feed = aCasts.feed
+			// 	let image = aCasts.image ? aCasts.image : aCasts.img
+			// 	console.log(image)
+			// 	let epDivs = []
+
+			// 	aCasts.enc.map(enc => {
+
+			// 		const div = document.createElement('div')
+			// 		div.pubDate = enc.pubDate
+			// 		div.title = enc.title
+			// 		div.src = enc.url
+			// 		div.image = image
+			// 		div.name = name
+
+			// 		const p1 = document.createElement('p')
+			// 		p1.textContent = enc.title
+
+			// 		const p2 = document.createElement('p')
+			// 		p2.textContent = enc.pubDate
+
+			// 		div.appendChild(p1)
+			// 		div.appendChild(p2)
+
+			// 		div.classList.add('enc')
+			// 		div.style.display = 'none'
+
+			// 		div.addEventListener('click', function (e) {
+
+			// 			console.dir(this)
+			// 			console.dir(e)
+
+			// 			console.log('---------------')
+
+			// 			const elem = this.dom.player
+			// 			elem.setAttribute('src', div.src)
+			// 			elem.setAttribute('name', div.name)
+			// 			elem.setAttribute('title', div.title)
+			// 			elem.setAttribute('image', div.image)
+			// 			elem.setAttribute('play', true)
+
+			// 		})
+
+			// 		epDivs.push(div)
+
+			// 	})
+
+			// 	const img = document.createElement('img')
+			// 	img.setAttribute('src', image)
+			// 	img.classList.add('image')
+			// 	img.style.width = 'auto'
+			// 	img.style.maxHeight = '10rem'
+
+			// 	const card = document.createElement('div')
+			// 	card.name = name
+			// 	card.image = image
+
+			// 	card.classList += 'card center '
+
+			// 	card.appendChild(img)
+
+			// 	epDivs.map(div => card.appendChild(div))
+
+			// 	card.onclick = function (e) {
+
+			// 		console.dir(this)
+
+			// 		if (this.style.height == '17rem') {
+			// 			this.style.height = '10rem'
+			// 			this.style.overflowY = 'auto'
+			// 			console.dir(this)
+			// 			Array.from(card.children).map(el => el.tagName == 'DIV' ? el.style.display = 'none' : '')
+			// 			Array.from(card.children).map(el => el.tagName == 'IMAGE' ? el.classList.add('shrinkImage') : '')
+			// 		} else {
+			// 			console.log('not 17rem')
+			// 			this.style.height = '17rem'
+			// 			this.style.overflowY = 'scroll'
+			// 			//card.scrollIntoView({top: 0, behavior: 'smooth'})
+			// 			Array.from(card.children).map(el => el.tagName == 'DIV' ? el.style.display = '' : '')
+			// 			Array.from(card.children).map(el => el.tagName == 'IMAGE' ? el.classList.remove('shrinkImage') : '')
+			// 			//Array.from(card.children).map(el => String(el.tagName).toLowerCase() == 'div' ? el.style.display = '' : '')
+			// 			//card.children.div.style.opacity = 1
+			// 			//setTimeout(() => this.scrollIntoView({top: 0, behavior: 'smooth'}), 525)
+			// 		}
+
+
+			// 		for (let prop in card.children) {
+			// 			if (String(card.children[prop].tagName).toLowerCase() == 'img') {
+			// 				card.children[prop].classList.contains('shrinkImage') ? card.children[prop].classList.remove('shrinkImage') :
+			// 					card.children[prop].classList.add('shrinkImage')
+			// 			}
+			// 		}
+
+			// 	}
+
+			// 	this.dom.gridBox.appendChild(card)
+			// }
+
+		}
+
+		if (document.createElement('ourrss-listen').constructor !== OurrssListen) {
+			OurrssListen.prototype.owner = (document._currentScript || document.currentScript).ownerDocument;
+			document.registerElement('ourrss-listen', OurrssListen);
+		}
+
+	</script>
+</dom-module>
