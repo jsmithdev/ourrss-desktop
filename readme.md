@@ -1,9 +1,9 @@
-# OurRSS-Electron
+# OurRSS-Desktop
 #### An open RSS player built with open web standards openly... (WIP)
 
 ###
 
-![OurRSS-Electron Screenie](https://i.imgur.com/HUyPAG3.png "OurRSS-Electron Screenie")
+![OurRSS-Desktop Screenie](https://i.imgur.com/HUyPAG3.png "OurRSS-Desktop Screenie")
 
 ## State 
 > Work In Progress

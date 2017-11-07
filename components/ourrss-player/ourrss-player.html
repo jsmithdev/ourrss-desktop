@@ -307,10 +307,6 @@
 				border-color: #BDBDBD;
 			}
 
-			:host body.vanilla-modal .modal-hider {
-				position: absolute;
-				left: -99999em;
-			}
 
 		</style>
 
@@ -411,22 +407,13 @@
 					</div>
 				</div>
 			</div>
-			<div id="foo" class="modal">
-				<div class="modal-inner">
-					<a data-modal-close>Close</a>
-					<div class="modal-content">
-						Border Collie. Treats... Frisbees!!! Border Collie. Treats... Frisbees!!! Border Collie. Treats... Frisbees!!! Border Collie.
-						Treats... Frisbees!!! Border Collie. Treats... Frisbees!!!
-
-					</div>
-				</div>
-			</div>
+			
 		</section>
 
 	</template>
 
 	<script>
-		const Modal = require('modal-vanilla');
+		
 		/*global HTMLElement navigator localStorage MediaMetadata*/
 		class OurrssPlayer extends HTMLElement {
 
@@ -596,11 +583,13 @@
 
 
 				this.dom.addToOurrss.onclick = () => {
-					console.log('add hit@!')
-					var myModal = new Modal({
-						title: 'My Modal Dialog',
-						content: 'This is a dynamic content for the modal injected from JS'
-					}).show();
+					
+					//const PLAYER = e.path[9].querySelector('ourrss-player')
+						console.dir(e.path)
+					// var myModal = new Modal({
+					// 	title: 'My Modal Dialog',
+					// 	content: 'This is a dynamic content for the modal injected from JS'
+					// }).show();
 				}
 
 				this.dom.forward.onclick = () => {

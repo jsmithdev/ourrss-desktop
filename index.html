@@ -46,16 +46,11 @@
 
 <script>
 	const ipc = require('electron').ipcRenderer;
-
-	const action = document.getElementById('getter')
-
+	const Modal = require('modal-vanilla');
 
 
 
-
-	action.onclick = () => {
-		getFeed();
-	}
+	const action = document.getElementById('getter').onclick = () => getFeed();
 
 
 	const getFeed = () => {
