@@ -7,7 +7,6 @@
 				user-select: none;
 			}
 
-
 			:host section {
 				z-index: 100;
 				position: fixed;
@@ -33,7 +32,6 @@
 				overflow: hidden;
 			}
 
-
 			:host #expand {
 				transition: all .3s ease-out;
 				user-select: none;
@@ -48,7 +46,6 @@
 				-webkit-transform: rotate(-180deg);
 				transform: rotate(-180deg);
 			}
-
 
 			:host .inline-player {
 				width: 100%;
@@ -307,8 +304,9 @@
 				border-color: #BDBDBD;
 			}
 
-
 		</style>
+
+
 
 		<section id="section" class="dark-primary-color ">
 			<div class="grid">
@@ -407,18 +405,25 @@
 					</div>
 				</div>
 			</div>
-			
+
 		</section>
 
 	</template>
 
 	<script>
-		
+	
+		const Util = require('./ourrss-util')
+		const ipc = require('electron').ipcRenderer;
+
 		/*global HTMLElement navigator localStorage MediaMetadata*/
 		class OurrssPlayer extends HTMLElement {
 
-			init() {
-				this.registerElements()
+
+			// Fires when an instance of the element is created.
+			createdCallback() {
+				this.setProperties()
+
+				//console.log('instance was created.')
 			}
 
 			setProperties() {
@@ -427,7 +432,7 @@
 
 			// Fires when an instance was removed from the document.
 			detachedCallback() {
-				this.log('instance was removed.')
+				console.log('instance was removed.')
 			}
 
 			// Fires when an attribute was added, removed, or updated.
@@ -443,23 +448,30 @@
 					if ('name' == attr) {
 						this.name = newVal
 						console.log('name ', this.name)
-					} else if ('title' == attr) {
+					}
+					else if ('title' == attr) {
 						this.title = newVal
-					} else if ('type' == attr) {
+					}
+					else if ('type' == attr) {
 						this.type.volume
-					} else if ('volume' == attr) {
-						this.dom.audio.volume
-					} else if ('time' == attr) {
-						this.dom.audio.currentTime = parseInt(newVal)
-					} else if ('src' == attr) {
+					}
+					else if ('volume' == attr) {
+						//this.dom.audio.volume
+					}
+					else if ('time' == attr) {
+						this.dom.audio ? this.dom.audio.currentTime = parseInt(newVal) : ''
+					}
+					else if ('src' == attr) {
 						console.log('src >> ', newVal)
 						this.dom.audio.src = newVal
 						this.src = newVal
-					} else if ('image' == attr) {
+					}
+					else if ('image' == attr) {
 						this.image = newVal
 						this.dom.playdiv.style.backgroundImage = `url(${this.image})`
 
-					} else if ('play' == attr) {
+					}
+					else if ('play' == attr) {
 						newVal ? this.dom.play.onclick() : this.dom.pause.onclick()
 					}
 				}
@@ -471,18 +483,13 @@
 				var clone = document.importNode(template.content, true)
 				this.root = this.createShadowRoot()
 				this.root.appendChild(clone)
-				this.init()
+				this.registerElements()
+
+
+				//this.init()
 
 			}
 
-
-			// Fires when an instance of the element is created.
-			createdCallback() {
-				this.setProperties()
-				this.parseAttributes()
-
-				//console.log('instance was created.')
-			}
 
 			parseAttributes() {
 
@@ -512,18 +519,40 @@
 				this.dom.buffer = this.root.getElementById('buffer')
 				this.dom.progressAmount = this.root.getElementById('progressAmount')
 				this.dom.bufferAmount = this.root.getElementById('bufferAmount')
-
-				this.dom.addToOurrss = this.root.getElementById('addToOurRSS')
-
-
 				this.dom.paths = Array.from(this.root.querySelector('.path'))
 
+				this.dom.add = this.root.getElementById('addToOurRSS')
+				this.dom.modal = this.root.ownerDocument.querySelector('ourrss-modal')
+				
+				this.parseAttributes()
 				this.addListeners()
 			}
 
 			addListeners() {
+				
+				this.dom.add.onclick = () => {
+					const modal = this.dom.modal
+					if(modal.hasAttribute('hidden')){
+						modal.removeAttribute('hidden')
+						modal.visible = false
+						modal.active = false
+						modal.title = 'Add a Feed'
 
-				this.dom.play.onclick = function () {
+						modal.setAttribute('content', 'addFeed')
+
+
+						console.log('hidden')
+					}
+					else {
+						this.dom.modal.setAttribute('hidden', true)
+						this.dom.modal.visible = true
+						this.dom.modal.active = true
+						console.log('show')
+					}
+				}
+
+
+				this.dom.play.onclick = () => {
 
 					console.log('IN PLAYER CLICK SET SRC ')
 					console.dir(String(this.src))
@@ -568,7 +597,7 @@
 
 					//setup player
 					this.dom.audio.play().catch(e => false)
-				}.bind(this)
+				}
 
 				this.dom.pause.onclick = () => {
 					this.dom.audio.pause();
@@ -579,17 +608,6 @@
 				this.dom.expand.onclick = () => {
 					this.dom.expand.classList.toggle('expand')
 					this.dom.section.classList.toggle('expand')
-				}
-
-
-				this.dom.addToOurrss.onclick = () => {
-					
-					//const PLAYER = e.path[9].querySelector('ourrss-player')
-						console.dir(e.path)
-					// var myModal = new Modal({
-					// 	title: 'My Modal Dialog',
-					// 	content: 'This is a dynamic content for the modal injected from JS'
-					// }).show();
 				}
 
 				this.dom.forward.onclick = () => {
@@ -612,12 +630,33 @@
 					}
 				})
 
-				this.dom.volume.addEventListener('change', function () {
+				/* this.dom.volume.addEventListener('change', function () {
 					console.dir(this)
 					this.dom.audio.volume = this.dom.volume.value
-				}.bind(this))
+				}.bind(this)) */
+
+
+
+
+
+
 
 				this.dom.paths.map(path => path.onclick = path.parentElement.onclick())
+				/* 
+				this.dom.getter.onclick = function () {
+					console.dir(this.dom)
+					console.log(this.dom.newInput.value, ' getter')
+					//Util.getFeed(this.root.querySelector('#url').value)
+				}
+								this.dom.getter.onclick = function () {
+									console.dir(this.dom)
+									console.log(this.dom.newInput.value, ' getter')
+									//Util.getFeed(this.root.querySelector('#url').value)
+								} */
+				/* this.dom.addToOurrss.onclick = (e) => {
+					
+					
+				} */
 			}
 
 		}

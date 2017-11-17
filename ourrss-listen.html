@@ -62,9 +62,10 @@
 				flex: 1;
 			}
 
-			:host div:nth-child(n) {
+			:host .card:nth-child(n) {
 				margin: .5rem;
 			}
+
 			/* @media (max-width: 450px) {
 				:host ::-webkit-scrollbar {
 					display: none;
@@ -79,6 +80,7 @@
 					grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 				}
 			} */
+
 			/*:host .box:nth-child(even) {
 				background-color: #EEE;
 				color: #000;
@@ -116,8 +118,6 @@
 			}
 
 			:host .card-active {
-				height: 100%;
-				width: 100%;
 				transition: all .1s ease-in-out;
 				height: 100%;
 				width: 100%;
@@ -186,12 +186,91 @@
 				height: 2rem;
 			}
 
+
+
+
+			/* The Modal (background) */
+
+			:host .modal {
+
+				transition: all 0.5s ease-in-out;
+
+				background-color: #FFF;
+				color: #212121;
+
+				text-align: center;
+
+				transition: all 0.2s ease-in-out;
+
+				cursor: pointer;
+
+				opacity: .4;
+				display: none;
+				/*  position: fixed; */
+				z-index: 9999;
+				overflow: auto;
+				background: transparent;
+			}
+
+			:host .modal-active {
+
+				display: flex;
+				opacity: 1;
+				/* position: fixed; */
+				z-index: 9999;
+				/* padding-top: 30%;
+				
+				left: 0;
+				top: 0;
+				width: 100%;*/
+				overflow: auto;
+				/* Enable scroll if needed 
+				background-color: rgb(0, 0, 0);
+				 Fallback color 
+				background-color: rgba(0, 0, 0, 0.4);
+				 Black w/ opacity */
+			}
+
+			/* Modal Content */
+
+			:host .modal-content {
+
+				background-color: #fefefe;
+				margin: auto;
+				padding: 20px;
+				border: 1px solid #888;
+				width: 80%;
+			}
+
+			/* The Close Button */
+
+			:host .closeX {
+				color: #aaaaaa;
+				float: right;
+				font-size: 28px;
+				font-weight: bold;
+			}
+
+			:host .closeX:hover,
+			:host .closeX:focus {
+				color: #000;
+				text-decoration: none;
+				cursor: pointer;
+			}
+
+			:host button {
+				/* background: rgb(56, 69, 77); */
+				background: #0288D1;
+				color: #B3E5FC;
+				border: none;
+				padding: 1rem;
+				font-size: 1rem;
+			}
 		</style>
 
-		<div id="gridBox" class="grid-box">
 
+		<div id="gridBox" class="grid-box"></div>
 
-		</div>
 
 	</template>
 
@@ -211,23 +290,18 @@
 
 			// Fires when an instance was removed from the document.
 			detachedCallback() {
-				this.log('instance was removed.')
+				console.log('instance was removed.')
 			}
 
 			// Fires when an attribute was added, removed, or updated.
 			attributeChangedCallback(attr, oldVal, newVal) {
 
-				// console.log(` ourrss-listen attr changed 
-				// 	-attr: ${attr}
-				// 	-oldVal: ${oldVal}
-				// 	-newVal:${newVal}
-				// `)
+				console.log(` ourrss-listen attr changed 
+				 	-attr: ${attr}
+				 	-oldVal: ${oldVal}
+				 	-newVal:${newVal}
+				 `)
 
-				if (newVal) {
-
-
-					//'src' == attr ? this.dom.audio.src = newVal : ''
-				}
 			}
 
 			// Fires when an instance was inserted into the document.
@@ -256,6 +330,7 @@
 			}
 
 			registerElements() {
+
 				this.dom = {}
 				this.dom.gridBox = this.root.querySelector('.grid-box')
 				this.dom.boxes = Array.from(this.root.children.gridBox.children)
@@ -277,19 +352,26 @@
 				const store = new Store();
 
 				const audio = store.get('audio')
+				if (!store.get('audio')) {
+					const audio = {}
+					audio.feeds = []
+					store.set('audio', audio)
+				} else {
 
-				console.log(`ourrss-listen is ready. Making cards`)
-
-
-				audio.feeds.map(x => {
 					console.dir(audio)
-					this.mkCard(x)
-				})
 
+					console.log(`ourrss-listen is ready. Making cards`)
+
+
+					audio.feeds.map(x => {
+						console.dir(audio)
+						this.mkCard(x)
+					})
+				}
 			}
 
 			del(e) {
-				if(!e){
+				if (!e) {
 					console.log('NO EVENT')
 					return false
 				}
@@ -322,25 +404,14 @@
 
 				let delCont = document.createElement('div');
 				delCont.innerHTML = '<i class="material-icons card-icon">delete</i>';
-				
+
 				let del = delCont.childNodes[0]
-				del.onclick = this.del()
+				del.onclick = this.del
 				//Array.from(del.children).map(x => x.onclick = this.delete())
 
-
-				// div = document.createElement('div');
-				// const ref =
-				// 	`<svg id="refresh" class="card-icon" viewBox="0 0 24 24">
-				// 	<path fill="#B3E5FC"  d="M17.65,6.35C16.2,4.9 14.21,4 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20C15.73,20 18.84,17.45 19.73,14H17.65C16.83,16.33 14.61,18 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6C13.66,6 15.14,6.69 16.22,7.78L13,11H20V4L17.65,6.35Z"
-				// </svg>`
-				// div.innerHTML = ref;
-				// const refElem = div.childNodes[0]
-				// refElem.onclick = this.refresh()
-				// Array.from(refElem.children).map(x => x.onclick = this.refresh())
-				// ${refElem.outerHTML}
 				card.innerHTML +=
 					`<span class="card-actions">
-						${del.outerHTML}
+						
 					</span>
 					<img draggable="false" class="card-img" src="${feed.image}"  />
 
@@ -369,8 +440,9 @@
 
 						//card.parentElement.style.display = 'block'
 
+						console.log('//todo use this.dom.player')
+						console.log(this.dom.player)
 						const PLAYER = e.path[9].querySelector('ourrss-player')
-						console.log(elem.dataset)
 						PLAYER.setAttribute('image', image.src)
 						PLAYER.setAttribute('src', elem.dataset.audio)
 						PLAYER.setAttribute('name', elem.dataset.name)
@@ -403,106 +475,6 @@
 				this.dom.gridBox.appendChild(card)
 			}
 
-			// mkCard(aCasts) {
-			// 	console.dir(aCasts)
-			// 	let name = aCasts.title
-			// 	let feed = aCasts.feed
-			// 	let image = aCasts.image ? aCasts.image : aCasts.img
-			// 	console.log(image)
-			// 	let epDivs = []
-
-			// 	aCasts.enc.map(enc => {
-
-			// 		const div = document.createElement('div')
-			// 		div.pubDate = enc.pubDate
-			// 		div.title = enc.title
-			// 		div.src = enc.url
-			// 		div.image = image
-			// 		div.name = name
-
-			// 		const p1 = document.createElement('p')
-			// 		p1.textContent = enc.title
-
-			// 		const p2 = document.createElement('p')
-			// 		p2.textContent = enc.pubDate
-
-			// 		div.appendChild(p1)
-			// 		div.appendChild(p2)
-
-			// 		div.classList.add('enc')
-			// 		div.style.display = 'none'
-
-			// 		div.addEventListener('click', function (e) {
-
-			// 			console.dir(this)
-			// 			console.dir(e)
-
-			// 			console.log('---------------')
-
-			// 			const elem = this.dom.player
-			// 			elem.setAttribute('src', div.src)
-			// 			elem.setAttribute('name', div.name)
-			// 			elem.setAttribute('title', div.title)
-			// 			elem.setAttribute('image', div.image)
-			// 			elem.setAttribute('play', true)
-
-			// 		})
-
-			// 		epDivs.push(div)
-
-			// 	})
-
-			// 	const img = document.createElement('img')
-			// 	img.setAttribute('src', image)
-			// 	img.classList.add('image')
-			// 	img.style.width = 'auto'
-			// 	img.style.maxHeight = '10rem'
-
-			// 	const card = document.createElement('div')
-			// 	card.name = name
-			// 	card.image = image
-
-			// 	card.classList += 'card center '
-
-			// 	card.appendChild(img)
-
-			// 	epDivs.map(div => card.appendChild(div))
-
-			// 	card.onclick = function (e) {
-
-			// 		console.dir(this)
-
-			// 		if (this.style.height == '17rem') {
-			// 			this.style.height = '10rem'
-			// 			this.style.overflowY = 'auto'
-			// 			console.dir(this)
-			// 			Array.from(card.children).map(el => el.tagName == 'DIV' ? el.style.display = 'none' : '')
-			// 			Array.from(card.children).map(el => el.tagName == 'IMAGE' ? el.classList.add('shrinkImage') : '')
-			// 		} else {
-			// 			console.log('not 17rem')
-			// 			this.style.height = '17rem'
-			// 			this.style.overflowY = 'scroll'
-			// 			//card.scrollIntoView({top: 0, behavior: 'smooth'})
-			// 			Array.from(card.children).map(el => el.tagName == 'DIV' ? el.style.display = '' : '')
-			// 			Array.from(card.children).map(el => el.tagName == 'IMAGE' ? el.classList.remove('shrinkImage') : '')
-			// 			//Array.from(card.children).map(el => String(el.tagName).toLowerCase() == 'div' ? el.style.display = '' : '')
-			// 			//card.children.div.style.opacity = 1
-			// 			//setTimeout(() => this.scrollIntoView({top: 0, behavior: 'smooth'}), 525)
-			// 		}
-
-
-			// 		for (let prop in card.children) {
-			// 			if (String(card.children[prop].tagName).toLowerCase() == 'img') {
-			// 				card.children[prop].classList.contains('shrinkImage') ? card.children[prop].classList.remove('shrinkImage') :
-			// 					card.children[prop].classList.add('shrinkImage')
-			// 			}
-			// 		}
-
-			// 	}
-
-			// 	this.dom.gridBox.appendChild(card)
-			// }
-
 		}
 
 		if (document.createElement('ourrss-listen').constructor !== OurrssListen) {
@@ -512,3 +484,62 @@
 
 	</script>
 </dom-module>
+
+
+				<!-- /*if (attr === 'addfeed') {
+					
+					 if (newVal) {
+						this.dom.modal.classList.add('modal-active')
+						/* if (oldVal == true) {
+							this.setAttribute('addFeed', false)
+							this.dom.modal.classList.remove('modal-active')
+						}
+						else {
+
+							this.dom.modal.classList.add('modal-active')
+						} 
+					}
+					else if(newVal == false){
+						this.dom.modal.classList.remove('modal-active')
+
+					}
+
+					Array.from(this.root.querySelectorAll(".close")).map(x => x.onclick = () => this.dom.modal.classList.remove('modal-active'))
+
+					console.log('this.dom.modal via listen')
+					console.log(this.dom.modal)
+
+					//this.dom.newInput = this.root.querySelector('#newInput')
+					//this.dom.getter = this.root.getElementById('getter')
+
+
+					//this.dom.modal.style.display = "block";
+					// When the user clicks on <span> (x), close the modal
+
+					//this.dom.close.onclick = () => this.dom.modal.classList.remove('modal-active')
+
+ 
+
+
+
+					// When the user clicks anywhere outside of the modal, close it
+					//window.onclick = (e) => console.log(e.target)
+					/* 
+					window.onclick = function (event) {
+
+
+						console.log(event.target.classList.contains('modal-content'))
+						if (event.target.classList.contains('modal-content')) {
+
+							console.log('WINDOW HIT')
+							console.log(event.target)
+
+							this.dom.modal.style.display = "none";
+
+						}
+					}.bind(this)
+					
+					//}.bind(this)
+
+					//'src' == attr ? this.dom.audio.src = newVal : ''
+				}*/ -->

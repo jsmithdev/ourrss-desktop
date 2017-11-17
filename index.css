@@ -18,11 +18,10 @@ body {
 	color: #FFF;
 	padding-bottom: 1rem;
 	box-shadow: 0 4px 2px -2px rgba(0, 0, 0, 0.2), 0 4px 2px -2px rgba(0, 0, 0, 0.19);
-	
     position:fixed;
     top:0;
     width:100%;
-	z-index:100;
+	z-index:90;
 	margin-bottom: 10rem;
 }
 .ourrss-header img {
@@ -36,8 +35,8 @@ body {
 }
 
 button {
-	background: #0288D1;
-    color: #B3E5FC;
+	color: rgb(56, 69, 77);
+    background: #0288D1;
     border: none;
 	padding: 1rem;
 	font-size: 1rem;
