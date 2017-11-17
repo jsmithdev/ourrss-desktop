@@ -1,0 +1,379 @@
+<dom-module id="ourrss-modal">
+  <template>
+    <style>
+      :host,
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      :host {
+        position: fixed;
+        display: flex;
+        top: 0;
+        right: 0;
+        left: 0;
+        bottom: 0;
+        overflow: hidden;
+        /* scroll */
+        padding: 1rem;
+        z-index: 2147483647;
+        -moz-osx-font-smoothing: grayscale;
+        -webkit-font-smoothing: antialiased;
+        /* font-smoothing: antialiased; */
+      }
+
+      :host([hidden]) {
+        display: none;
+      }
+
+      /* Click-to-escape target */
+
+      .overlay {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        cursor: pointer;
+        background: rgba(0, 0, 0, 0.2);
+      }
+
+      :host(:not([visible])) .overlay {
+        /* opacity: 0; */
+        transition: opacity 200ms ease;
+        transition-delay: 100ms;
+      }
+
+      :host([visible]) .overlay {
+        opacity: 1;
+        transition: opacity 300ms ease;
+      }
+
+      .modal {
+        transition: transform 175ms cubic-bezier(0.4, 0.0, 1, 1),
+        opacity 120ms ease;
+        display: inline-block;
+        position: relative;
+        background: white;
+        margin: auto;
+        overflow: hidden;
+        z-index: 1;
+        box-shadow: 0 6px 10px 0 rgba(0, 0, 0, 0.14),
+        0 1px 18px 0 rgba(0, 0, 0, 0.12),
+        0 3px 5px -1px rgba(0, 0, 0, 0.4);
+
+
+        width: 70%;
+        height: 20%;
+        background-color: #FFF;
+        color: #212121;
+        font-size: 150%;
+        text-align: center;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+        transition: all 0.2s ease-in-out;
+
+        cursor: pointer;
+        /* @apply(--simple-modal); */
+      }
+
+      :host(:not([visible])) .modal {
+        transform: translateZ(0) scale(0.8, 0.95);
+        transition: transform 175ms cubic-bezier(0.4, 0.0, 1, 1),
+        opacity 120ms ease;
+      }
+
+      :host([visible]) .modal {
+        opacity: 1;
+        transform: translateZ(0) scale(1);
+        transition: transform 140ms cubic-bezier(0.0, 0.0, 0.2, 1),
+        opacity 100ms ease;
+        transition-delay: 150ms
+      }
+
+      .modal__title {
+        text-align: center;
+        line-height: 1;
+        /* @apply(--simple-modal-title); */
+      }
+
+      .modal__content {
+        padding: 40px;
+        /* var(--simple-modal-padding, ); */
+        overflow: auto;
+
+      }
+
+      .modal__close:hover {
+        opacity: 1;
+      }
+
+      :host .content {
+        height: 100%;
+        text-align: center;
+      }
+
+      :host button {
+        color: #B3E5FC;
+        background: #0288D1;
+        padding: 1rem;
+        font-size: 1.5rem;
+        width: 100%;
+        cursor: pointer;
+        border: none;
+      }
+
+      :host button:focus {
+        border: none;
+      }
+
+      :host input {
+        border: 0;
+        border-bottom: 2px solid #1976D2;
+        width: 100%;
+        font-size: 2rem;
+        line-height: 35px;
+        height: 70px;
+        text-align: center;
+        padding: 10px;
+        background: transparent;
+        color: rgba(0, 0, 0);
+      }
+      :host input:focus {
+        background: #eee;
+        border: none;
+      }
+
+      :host .container {
+
+        bottom: 0px;
+        margin-bottom: 0px;
+        position: absolute;
+      }
+    </style>
+
+    <div id="overlay" class="overlay" on-tap="_close">
+    </div>
+
+    <div class="modal" id="modal">
+
+      <h1 class="title">Border Collies</h1>
+
+      <div class="content">
+        Frisbees and treats!
+      </div>
+    </div>
+  </template>
+
+  <script>
+
+    class OurrssModal extends HTMLElement {
+
+      setProperties() {
+
+        this.is = 'ourrss-modal'
+        /**
+        * State of the modal
+        * @type {Boolean}
+        */
+        this.active = {
+          type: Boolean,
+          notify: true,
+          value: false
+        }
+
+        /**
+        * Whether modal is visible
+        * Used for transitions
+        * @type {Boolean}
+        */
+        this.visible = {
+          type: Boolean,
+          reflectToAttribute: true,
+          readonly: true,
+          value: false
+        }
+
+        /**
+        * Whether modal is hidden
+        * Used for transitions
+        * @type {Boolean}
+        */
+        this.hidden = {
+          type: Boolean,
+          reflectToAttribute: true,
+          readonly: true,
+          value: true
+        }
+
+        /**
+        * Title to show on modal
+        * @type {String}
+        */
+        /* this.title = {
+          type: String,
+          value: ''
+        } */
+
+      }
+
+      // Fires when an instance was removed from the document.
+      detachedCallback() {
+        console.log('instance was removed.')
+      }
+
+      // Fires when an attribute was added, removed, or updated.
+      attributeChangedCallback(attr, oldVal, newVal) {
+
+        console.log(`
+          ourrss-modal attr changed 
+				 	-attr: ${attr}
+				 	-oldVal: ${oldVal}
+				 	-newVal:${newVal}
+				 `)
+
+
+        if (attr == 'title') {
+          this.dom.title.textContent = newVal
+        }
+        else if (attr == 'content') {
+
+          if (newVal == 'addFeed') {
+            this.addFeed()
+          }
+
+        }
+      }
+
+      // Fires when an instance was inserted into the document.
+      attachedCallback() {
+        var template = this.owner.querySelector('template')
+        var clone = document.importNode(template.content, true)
+        this.root = this.createShadowRoot()
+        this.root.appendChild(clone)
+        this.registerElements()
+      }
+
+      // Fires when an instance of the element is created.
+      createdCallback() {
+        this.setProperties()
+      }
+
+      parseAttributes() {
+        //this.name = this.getAttribute('name');
+        this.dom.title.textContent = this.getAttribute('title')
+        this.dom.content.innerHTML = this.getAttribute('content')
+
+      }
+
+      registerElements() {
+
+        this.dom = {}
+        this.dom.modal = this.root.querySelector('#modal')
+        this.dom.overlay = this.root.querySelector('#overlay')
+        this.dom.title = this.root.querySelector('.title')
+        this.dom.content = this.root.querySelector('.content')
+
+        this.addListeners()
+
+      }
+
+      addListeners() {
+
+        this.dom.modal.onclick = (e) => {
+          console.log('modal click')
+        }
+
+        this.dom.overlay.onclick = (e) => {
+          console.log('overlay click')
+
+          this.setAttribute('hidden', true)
+          this.visible = false
+          this.active = false
+
+        }
+
+        this.parseAttributes()
+      }
+
+      addFeed() {
+
+        function add(e, input) {
+          e.cancelBubble = true
+          //e.preventDefault()
+          const url = input.value
+
+          if (!url) {
+            console.error('No URL provided')
+            return false;
+          }
+
+          console.log(`Getting feed: ${url}`);
+          ipc.send('getFeed', url);
+          ipc.once('getFeedRes', function (event, rss) {
+
+            console.log(`Got Feed!`);
+            console.dir(rss)
+
+            const store = new Store();
+
+            if (!store.get('audio')) {
+              const audio = {}
+              audio.feeds = []
+              store.set('audio', audio)
+            }
+
+            const audio = store.get('audio')
+
+            if (audio.feeds.length) {
+
+              for (let i = audio.feeds.length - 1; i--;) {
+                console.log(audio.feeds[i].title, ' VS ', rss.title)
+                if (audio.feeds[i].title == rss.title || audio.feeds[i].title == 'Hound Tall') {
+                  console.log('b4 ', audio.feeds.length)
+                  audio.feeds.splice(i, 1);
+                  console.log('after ', audio.feeds.length)
+
+                }
+              }
+
+              audio.feeds.push(rss)
+
+              store.set('audio', audio)
+            }
+            else {
+              audio.feeds.push(rss)
+              store.set('audio', audio)
+            }
+
+            console.dir(audio)
+          })
+        }
+
+        const cont = document.createElement('div')
+          const html = `<div class="container">
+            <input id="feedURL" placeholder="Paste Feed URL" />
+            <button>Add Feed</button>
+          </div>`
+
+          cont.innerHTML = html
+          const content = cont.childNodes[0]
+          const input = content.querySelector('input')
+          content.querySelector('button').onclick = (e) => add(e, input)
+
+          this.dom.content.appendChild(content)
+
+
+        }
+
+
+      }
+      if(document.createElement('ourrss-modal').constructor !== OurrssModal) {
+        OurrssModal.prototype.owner = (document._currentScript || document.currentScript).ownerDocument;
+        document.registerElement('ourrss-modal', OurrssModal);
+      }
+
+  </script>
+</dom-module>

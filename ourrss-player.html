@@ -7,7 +7,6 @@
 				user-select: none;
 			}
 
-
 			:host section {
 				z-index: 100;
 				position: fixed;
@@ -33,7 +32,6 @@
 				overflow: hidden;
 			}
 
-
 			:host #expand {
 				transition: all .3s ease-out;
 				user-select: none;
@@ -48,7 +46,6 @@
 				-webkit-transform: rotate(-180deg);
 				transform: rotate(-180deg);
 			}
-
 
 			:host .inline-player {
 				width: 100%;
@@ -307,7 +304,6 @@
 				border-color: #BDBDBD;
 			}
 
-
 		</style>
 
 
@@ -416,16 +412,6 @@
 
 	<script>
 	
-/* 
-		const globalShortcut = require('electron').globalShortcut
-		console.log(globalShortcut)
-		globalShortcut.register('Space', () => {
-			console.log('CommandOrControl+X is pressed')
-			document.getElementById('play').click()
-
-		})
- */
-
 		const Util = require('./ourrss-util')
 		const ipc = require('electron').ipcRenderer;
 
@@ -536,29 +522,37 @@
 				this.dom.paths = Array.from(this.root.querySelector('.path'))
 
 				this.dom.add = this.root.getElementById('addToOurRSS')
-				this.dom.listen = this.root.ownerDocument.querySelector('ourrss-listen')
+				this.dom.modal = this.root.ownerDocument.querySelector('ourrss-modal')
 				
-
 				this.parseAttributes()
 				this.addListeners()
 			}
 
 			addListeners() {
 				
-				let bool = true;
-				this.dom.add.onclick = function () {
-					if(bool){
-						bool = false;
-						this.dom.listen.setAttribute('addFeed', true)
+				this.dom.add.onclick = () => {
+					const modal = this.dom.modal
+					if(modal.hasAttribute('hidden')){
+						modal.removeAttribute('hidden')
+						modal.visible = false
+						modal.active = false
+						modal.title = 'Add a Feed'
+
+						modal.setAttribute('content', 'addFeed')
+
+
+						console.log('hidden')
 					}
 					else {
-						bool = true
-						this.dom.listen.setAttribute('addFeed', '')
+						this.dom.modal.setAttribute('hidden', true)
+						this.dom.modal.visible = true
+						this.dom.modal.active = true
+						console.log('show')
 					}
-				}.bind(this)
+				}
 
 
-				this.dom.play.onclick = function () {
+				this.dom.play.onclick = () => {
 
 					console.log('IN PLAYER CLICK SET SRC ')
 					console.dir(String(this.src))
@@ -603,7 +597,7 @@
 
 					//setup player
 					this.dom.audio.play().catch(e => false)
-				}.bind(this)
+				}
 
 				this.dom.pause.onclick = () => {
 					this.dom.audio.pause();

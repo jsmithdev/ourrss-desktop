@@ -35,8 +35,8 @@ body {
 }
 
 button {
-	background: rgb(56, 69, 77);
-    color: #B3E5FC;
+	color: rgb(56, 69, 77);
+    background: #0288D1;
     border: none;
 	padding: 1rem;
 	font-size: 1rem;

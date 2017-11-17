@@ -269,27 +269,8 @@
 		</style>
 
 
-		<div id="gridBox" class="grid-box">
+		<div id="gridBox" class="grid-box"></div>
 
-
-		</div>
-
-
-		<!-- The Modal -->
-		<div id="myModal" class="modal">
-
-			<!-- Modal content -->
-			<div class="modal-content">
-				<span class="closeX">&times;</span>
-				<p>Some text in the Modal..</p>
-				<input id="newInput" placeholder="Audio Feed url" />
-				<br/>
-				<button class="close">Cancel</button>
-				<button id="getter">Get Feed</button>
-
-			</div>
-
-		</div>
 
 	</template>
 
@@ -309,7 +290,7 @@
 
 			// Fires when an instance was removed from the document.
 			detachedCallback() {
-				this.log('instance was removed.')
+				console.log('instance was removed.')
 			}
 
 			// Fires when an attribute was added, removed, or updated.
@@ -321,63 +302,6 @@
 				 	-newVal:${newVal}
 				 `)
 
-				if (attr === 'addfeed') {
-					
-					if (newVal) {
-						this.dom.modal.classList.add('modal-active')
-						/* if (oldVal == true) {
-							this.setAttribute('addFeed', false)
-							this.dom.modal.classList.remove('modal-active')
-						}
-						else {
-
-							this.dom.modal.classList.add('modal-active')
-						} */
-					}
-					else if(newVal == false){
-						this.dom.modal.classList.remove('modal-active')
-
-					}
-
-					Array.from(this.root.querySelectorAll(".close")).map(x => x.onclick = () => this.dom.modal.classList.remove('modal-active'))
-
-					console.log('this.dom.modal via listen')
-					console.log(this.dom.modal)
-
-					//this.dom.newInput = this.root.querySelector('#newInput')
-					//this.dom.getter = this.root.getElementById('getter')
-
-
-					//this.dom.modal.style.display = "block";
-					// When the user clicks on <span> (x), close the modal
-
-					//this.dom.close.onclick = () => this.dom.modal.classList.remove('modal-active')
-
-
-
-
-
-					// When the user clicks anywhere outside of the modal, close it
-					//window.onclick = (e) => console.log(e.target)
-					/* 
-					window.onclick = function (event) {
-
-
-						console.log(event.target.classList.contains('modal-content'))
-						if (event.target.classList.contains('modal-content')) {
-
-							console.log('WINDOW HIT')
-							console.log(event.target)
-
-							this.dom.modal.style.display = "none";
-
-						}
-					}.bind(this)
-					*/
-					//}.bind(this)
-
-					//'src' == attr ? this.dom.audio.src = newVal : ''
-				}
 			}
 
 			// Fires when an instance was inserted into the document.
@@ -412,7 +336,6 @@
 				this.dom.boxes = Array.from(this.root.children.gridBox.children)
 				this.dom.cards = Array.from(this.root.querySelectorAll('.card'))
 				this.dom.player = this.root.querySelector('ourrss-player')
-				this.dom.modal = this.root.getElementById('myModal')
 
 				this.addListeners()
 
@@ -561,3 +484,62 @@
 
 	</script>
 </dom-module>
+
+
+				<!-- /*if (attr === 'addfeed') {
+					
+					 if (newVal) {
+						this.dom.modal.classList.add('modal-active')
+						/* if (oldVal == true) {
+							this.setAttribute('addFeed', false)
+							this.dom.modal.classList.remove('modal-active')
+						}
+						else {
+
+							this.dom.modal.classList.add('modal-active')
+						} 
+					}
+					else if(newVal == false){
+						this.dom.modal.classList.remove('modal-active')
+
+					}
+
+					Array.from(this.root.querySelectorAll(".close")).map(x => x.onclick = () => this.dom.modal.classList.remove('modal-active'))
+
+					console.log('this.dom.modal via listen')
+					console.log(this.dom.modal)
+
+					//this.dom.newInput = this.root.querySelector('#newInput')
+					//this.dom.getter = this.root.getElementById('getter')
+
+
+					//this.dom.modal.style.display = "block";
+					// When the user clicks on <span> (x), close the modal
+
+					//this.dom.close.onclick = () => this.dom.modal.classList.remove('modal-active')
+
+ 
+
+
+
+					// When the user clicks anywhere outside of the modal, close it
+					//window.onclick = (e) => console.log(e.target)
+					/* 
+					window.onclick = function (event) {
+
+
+						console.log(event.target.classList.contains('modal-content'))
+						if (event.target.classList.contains('modal-content')) {
+
+							console.log('WINDOW HIT')
+							console.log(event.target)
+
+							this.dom.modal.style.display = "none";
+
+						}
+					}.bind(this)
+					
+					//}.bind(this)
+
+					//'src' == attr ? this.dom.audio.src = newVal : ''
+				}*/ -->
