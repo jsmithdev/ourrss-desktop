@@ -1,3 +1,4 @@
+/*jshint esversion: 6, laxcomma: true, asi: true*/
 module.exports = {
     
     message: function(mess) {
