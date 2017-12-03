@@ -303,7 +303,6 @@
 			:host .divider-color {
 				border-color: #BDBDBD;
 			}
-
 		</style>
 
 
@@ -411,7 +410,7 @@
 	</template>
 
 	<script>
-	
+
 		const Util = require('./ourrss-util')
 		const ipc = require('electron').ipcRenderer;
 
@@ -445,9 +444,9 @@
 					// 	-newVal:${newVal}
 					// `)
 
+
 					if ('name' == attr) {
 						this.name = newVal
-						console.log('name ', this.name)
 					}
 					else if ('title' == attr) {
 						this.title = newVal
@@ -472,7 +471,7 @@
 
 					}
 					else if ('play' == attr) {
-						newVal ? this.dom.play.onclick() : this.dom.pause.onclick()
+						newVal == 'true' ? this.dom.play.onclick() : this.dom.pause.onclick()
 					}
 				}
 			}
@@ -523,16 +522,19 @@
 
 				this.dom.add = this.root.getElementById('addToOurRSS')
 				this.dom.modal = this.root.ownerDocument.querySelector('ourrss-modal')
-				
+
+				this.dom.cast = this.root.getElementById('chromecast')
+				this.dom.radio = this.root.getElementById('radio')
+
 				this.parseAttributes()
 				this.addListeners()
 			}
 
 			addListeners() {
-				
+
 				this.dom.add.onclick = () => {
 					const modal = this.dom.modal
-					if(modal.hasAttribute('hidden')){
+					if (modal.hasAttribute('hidden')) {
 						modal.removeAttribute('hidden')
 						modal.visible = false
 						modal.active = false
@@ -570,9 +572,11 @@
 					localStorage['audioName'] = String(this.name);
 					//console.dir(this)
 
-					const mess = {}
-					mess.head = `Playing  Cast `
-					mess.body = `${this.name}. ${this.title}.`
+					const mess = {
+						head: `Playing  Cast `,
+						body: `${this.name}. ${this.title}.`
+					}
+
 					ipc.send('message', mess);
 					ipc.once('getFeedRes', (event, data) => console.log('Mail ', data))
 
@@ -600,7 +604,7 @@
 				}
 
 				this.dom.pause.onclick = () => {
-					this.dom.audio.pause();
+					this.dom.audio.pause()
 					this.dom.play.classList.toggle('hide')
 					this.dom.pause.classList.toggle('hide')
 				}
@@ -610,17 +614,44 @@
 					this.dom.section.classList.toggle('expand')
 				}
 
-				this.dom.forward.onclick = () => {
-					this.setAttribute('time', parseInt(this.getAttribute('time')) + 30)
+				this.dom.radio.onclick = () => {
+					const radio = new Audio(`${__dirname}/radio.mp3`);
+					radio.currentTime = 0
+					radio.loop = true
+					radio.play()
+
+					Util.getAllAudio()
+						.then(x => {
+							const feed = x.feeds[Math.floor(Math.random() * x.feeds.length) + 0]
+							const episode = feed.items[Math.floor(Math.random() * feed.items.length) + 0]
+
+							let desc = episode.description ? String(episode.description).replace(/<p>|<\/p>/gi, '') : ''
+							
+							
+							this.setAttribute('image', feed.image)
+							this.setAttribute('src', episode.enclosures[0].url)
+							this.setAttribute('name', episode.title)
+							this.setAttribute('title', desc)
+							setTimeout(() => {
+								radio.pause()
+								this.dom.play.onclick()
+							}, 1000)
+							
+						})
 				}
 
-				this.dom.back.onclick = () => {
-					this.setAttribute('time', parseInt(this.getAttribute('time')) - 30)
-				}
+				this.dom.forward.onclick = () =>
+					this.setAttribute('time', parseInt(this.getAttribute('time')) + 30
+					)
 
-				this.dom.progress.addEventListener('click', (e) => {
+				this.dom.back.onclick = () =>
+					this.setAttribute('time', parseInt(this.getAttribute('time')) - 30
+					)
+
+
+				this.dom.progress.addEventListener('click', (e) =>
 					this.setAttribute('time', e.pageX * (this.dom.audio.duration / window.innerWidth))
-				})
+				)
 
 				this.dom.audio.addEventListener('timeupdate', () => {
 					const duration = this.dom.audio.duration;
@@ -630,33 +661,10 @@
 					}
 				})
 
-				/* this.dom.volume.addEventListener('change', function () {
-					console.dir(this)
-					this.dom.audio.volume = this.dom.volume.value
-				}.bind(this)) */
-
-
-
-
-
-
+				this.dom.cast.onclick = () => console.log('Chrome Cast is in todo stage')
 
 				this.dom.paths.map(path => path.onclick = path.parentElement.onclick())
-				/* 
-				this.dom.getter.onclick = function () {
-					console.dir(this.dom)
-					console.log(this.dom.newInput.value, ' getter')
-					//Util.getFeed(this.root.querySelector('#url').value)
-				}
-								this.dom.getter.onclick = function () {
-									console.dir(this.dom)
-									console.log(this.dom.newInput.value, ' getter')
-									//Util.getFeed(this.root.querySelector('#url').value)
-								} */
-				/* this.dom.addToOurrss.onclick = (e) => {
-					
-					
-				} */
+
 			}
 
 		}

@@ -5,9 +5,12 @@ const electron = require('electron');
 const Promise = require('promise');
 const path = require('path');
 const ipc = require('electron').ipcMain;
+const Store = require('electron-store')
+
 const Util = require('./ourrss-util')
 const getFeed = require('rss-to-json');
-const getRSS = (feed) => new Promise((res, rej) => getFeed.load(feed, (e, rss) => e ? rej(e) : res(rss)));
+const getRSS = (feed) => new Promise((res, rej) => 
+	getFeed.load(feed, (e, rss) => e ? rej(e) : res(rss)));
 
 const app = electron.app;
 
@@ -25,8 +28,8 @@ function onClosed() {
 
 function createMainWindow() {
 	const win = new electron.BrowserWindow({
-		width: 650,
-		height: 800,
+		width: 1000,
+		height: 900,
 		icon: path.join(`${__dirname}/img/icon.png`)
 	});
 
@@ -60,11 +63,46 @@ ipc.on('message', function (event, mess) {
 });
 
 ipc.on('getFeed', function (event, url) {
+	console.log(url)
+	getRSS(url).then(rss => {
+		rss.feed = url
+		//console.dir(rss)
+		event.sender.send('getFeedRes', rss)
+		
+		if(rss.image){
+			Util.message('Got Feed! Yasss', 'Got Feed! Yasss')
+			const store = new Store();
 
-	getRSS(url).then(x => {
-		if(x.image){
-			Util.message('Got Feed! Yasss')
-			event.sender.send('getFeedRes', x)
+			if (!store.get('audio')) {
+				const audio = {}
+				audio.feeds = []
+				store.set('audio', audio)
+			}
+
+			const audio = store.get('audio')
+
+			if (audio.feeds.length) {
+
+				for (let i = audio.feeds.length - 1; i--;) {
+					console.log(audio.feeds[i].title, ' VS ', rss.title)
+					if (audio.feeds[i].title === rss.title) {
+						console.log('b4 ', audio.feeds.length)
+						audio.feeds.splice(i, 1);
+						console.log('after ', audio.feeds.length)
+
+					}
+				}
+
+				audio.feeds.push(rss)
+
+				store.set('audio', audio)
+			}
+			else {
+				audio.feeds.push(rss)
+				store.set('audio', audio)
+			}
+
+			
 		}
 	}).catch(e => message(e))
 });

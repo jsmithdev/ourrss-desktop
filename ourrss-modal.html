@@ -278,6 +278,7 @@
         this.dom.overlay = this.root.querySelector('#overlay')
         this.dom.title = this.root.querySelector('.title')
         this.dom.content = this.root.querySelector('.content')
+        this.dom.listen = this.root.ownerDocument.querySelector('ourrss-listen')
 
         this.addListeners()
 
@@ -303,7 +304,7 @@
 
       addFeed() {
 
-        function add(e, input) {
+        const add = (e, input) => {
           e.cancelBubble = true
           //e.preventDefault()
           const url = input.value
@@ -315,44 +316,10 @@
 
           console.log(`Getting feed: ${url}`);
           ipc.send('getFeed', url);
-          ipc.once('getFeedRes', function (event, rss) {
+          ipc.once('getFeedRes', (event, rss) => this.dom.listen.setAttribute('mk-card', rss.title))
 
-            console.log(`Got Feed!`);
-            console.dir(rss)
-
-            const store = new Store();
-
-            if (!store.get('audio')) {
-              const audio = {}
-              audio.feeds = []
-              store.set('audio', audio)
-            }
-
-            const audio = store.get('audio')
-
-            if (audio.feeds.length) {
-
-              for (let i = audio.feeds.length - 1; i--;) {
-                console.log(audio.feeds[i].title, ' VS ', rss.title)
-                if (audio.feeds[i].title == rss.title || audio.feeds[i].title == 'Hound Tall') {
-                  console.log('b4 ', audio.feeds.length)
-                  audio.feeds.splice(i, 1);
-                  console.log('after ', audio.feeds.length)
-
-                }
-              }
-
-              audio.feeds.push(rss)
-
-              store.set('audio', audio)
-            }
-            else {
-              audio.feeds.push(rss)
-              store.set('audio', audio)
-            }
-
-            console.dir(audio)
-          })
+          input.value = ''
+          this.dom.overlay.click()
         }
 
         const cont = document.createElement('div')
