@@ -356,7 +356,7 @@
 			</div>
 
 			<!-- <audio> gets it's data from components attributes via component class -->
-			<audio id="audio" class="hide"></audio>
+			<audio id="audio" preload="auto" class="hide" ></audio>
 
 			<div id="drawer">
 
@@ -444,49 +444,58 @@
 					// 	-newVal:${newVal}
 					// `)
 
-
-					if ('name' == attr) {
-						this.name = newVal
-					}
-					else if ('title' == attr) {
-						this.title = newVal
-					}
-					else if ('type' == attr) {
-						this.type.volume
-					}
-					else if ('volume' == attr) {
-						//this.dom.audio.volume
-					}
-					else if ('time' == attr) {
-						this.dom.audio ? this.dom.audio.currentTime = parseInt(newVal) : ''
-					}
-					else if ('src' == attr) {
-						console.log('src >> ', newVal)
-						this.dom.audio.src = newVal
-						this.src = newVal
-					}
-					else if ('image' == attr) {
-						this.image = newVal
-						this.dom.playdiv.style.backgroundImage = `url(${this.image})`
-
-					}
-					else if ('play' == attr) {
-						newVal == 'true' ? this.dom.play.onclick() : this.dom.pause.onclick()
-					}
+					
+					switch (attr) {
+						case 'name': {
+							this.name = newVal
+							break
+						}
+						case 'title' : {
+							this.title = newVal
+							break
+						}
+						case 'type' : {
+							this.type.volume
+							break
+						}
+						case 'volume' : {
+							//this.dom.audio.volume
+							break
+						}
+						case 'time' : {
+							this.dom.audio ? this.dom.audio.currentTime = parseInt(newVal) : ''
+							break
+						}
+						case 'src' : {
+							console.log('src >> ', newVal)
+							this.dom.audio.src = newVal
+							this.src = newVal
+							break
+						}
+						case 'image' : {
+							this.image = newVal
+							this.dom.playdiv.style.backgroundImage = `url(${this.image})`
+							break
+						}
+						case 'play' : {
+							newVal == 'true' ? this.dom.play.onclick() : this.dom.pause.onclick()
+							break
+						}
+						default : {
+							console.error(`ourrss-play attr not handled: ${attr}`)
+						}
+				}
 				}
 			}
 
 			// Fires when an instance was inserted into the document.
 			attachedCallback() {
-				var template = this.owner.querySelector('template')
-				var clone = document.importNode(template.content, true)
+
+				const template = this.owner.querySelector('template')
+				const clone = document.importNode(template.content, true)
 				this.root = this.createShadowRoot()
 				this.root.appendChild(clone)
 				this.registerElements()
-
-
-				//this.init()
-
 			}
 
 
@@ -499,11 +508,10 @@
 				this.volume = this.getAttribute('volume');
 				this.time = this.getAttribute('time');
 				this.src = this.getAttribute('src');
-
-				//this.something = parseInt(this.getAttribute('something'));
 			}
 
 			registerElements() {
+
 				this.dom = {}
 				this.dom.section = this.root.getElementById('section')
 				this.dom.audio = this.root.getElementById('audio')
@@ -525,6 +533,7 @@
 
 				this.dom.cast = this.root.getElementById('chromecast')
 				this.dom.radio = this.root.getElementById('radio')
+				this.dom.settings = this.root.getElementById('settings')
 
 				this.parseAttributes()
 				this.addListeners()
@@ -539,26 +548,35 @@
 						modal.visible = false
 						modal.active = false
 						modal.title = ''
-
 						modal.setAttribute('content', 'addFeed')
-
-
-						console.log('hidden')
 					}
 					else {
-						this.dom.modal.setAttribute('hidden', true)
-						this.dom.modal.visible = true
-						this.dom.modal.active = true
-						console.log('show')
+						modal.setAttribute('hidden', true)
+						modal.visible = true
+						modal.active = true
+					}
+				}
+
+				this.dom.settings.onclick = () => {
+
+					const modal = this.dom.modal
+					
+					if (modal.hasAttribute('hidden')) {
+						modal.removeAttribute('hidden')
+						modal.visible = false
+						modal.active = false
+						modal.title = ''
+						modal.setAttribute('content', 'settings')
+					}
+					else {
+						modal.setAttribute('hidden', true)
+						modal.visible = true
+						modal.active = true
 					}
 				}
 
 
 				this.dom.play.onclick = () => {
-
-					console.log('IN PLAYER CLICK SET SRC ')
-					console.dir(String(this.src))
-					console.dir(this)
 
 					//Tweak UI
 					this.dom.playdiv.style.backgroundImage = 'url(' + this.image + ')'
@@ -570,15 +588,14 @@
 					localStorage['audioImg'] = String(this.image);
 					localStorage['audioFeed'] = String(this.src);
 					localStorage['audioName'] = String(this.name);
-					//console.dir(this)
 
-					const mess = {
+					const msg = {
 						head: `Playing  Cast `,
 						body: `${this.name}. ${this.title}.`
 					}
 
-					ipc.send('message', mess);
-					ipc.once('getFeedRes', (event, data) => console.log('Mail ', data))
+					ipc.send('message', msg);
+					ipc.once('getFeedRes', (event, data) => console.log('sent play msg ', data))
 
 					// todo fix fail : src error via mobile
 					if ('mediaSession' in navigator) {
@@ -597,10 +614,9 @@
 						//navigator.mediaSession.setActionHandler('previoustrack', function() {doSomthing()});
 						//navigator.mediaSession.setActionHandler('nexttrack', function() {doSomthing()});
 					}
-					console.dir(this.dom.audio)
 
 					//setup player
-					this.dom.audio.play().catch(e => false)
+					this.dom.audio.play() //.catch(e => false)
 				}
 
 				this.dom.pause.onclick = () => {
@@ -636,22 +652,22 @@
 								radio.pause()
 								this.dom.play.onclick()
 							}, 1000)
+
+							this.dom.audio.onended = this.dom.radio.onclick
 							
 						})
 				}
+				
 
 				this.dom.forward.onclick = () =>
-					this.setAttribute('time', parseInt(this.getAttribute('time')) + 30
-					)
+					this.setAttribute('time', parseInt(this.getAttribute('time')) + 30)
 
 				this.dom.back.onclick = () =>
-					this.setAttribute('time', parseInt(this.getAttribute('time')) - 30
-					)
+					this.setAttribute('time', parseInt(this.getAttribute('time')) - 30)
 
 
 				this.dom.progress.addEventListener('click', (e) =>
-					this.setAttribute('time', e.pageX * (this.dom.audio.duration / window.innerWidth))
-				)
+					this.setAttribute('time', e.pageX * (this.dom.audio.duration / window.innerWidth)))
 
 				this.dom.audio.addEventListener('timeupdate', () => {
 					const duration = this.dom.audio.duration;
