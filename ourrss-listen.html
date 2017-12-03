@@ -106,8 +106,6 @@
 				text-align: center;
 				box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 
-				transition: all 0.2s ease-in-out;
-
 				cursor: pointer;
 			}
 
@@ -117,11 +115,12 @@
 			}
 
 			:host .card-active {
-				transition: all .1s ease-in-out;
+				transition: all .5s ease-in-out;
 				height: 100%;
 				width: 100%;
 				z-index: 90;
 				margin-top: 6rem !important;
+				opacity: 1;
 			}
 
 			:host .card-body {
@@ -186,7 +185,6 @@
 			}
 
 			:host button {
-				/* background: rgb(56, 69, 77); */
 				background: #0288D1;
 				color: #B3E5FC;
 				border: none;
@@ -204,6 +202,7 @@
 			:host .gridContainer {
 				width: 81%;
 				margin: 0 auto;
+				padding-bottom: 8rem;
 				/* border: 1pt solid black; */
 			}
 		</style>
@@ -253,6 +252,13 @@
 					feed.then(x => this.mkCard(x))
 					feed.catch(x => console.log(`Error: ${x}`))
 				}
+				else if('mk-all'){
+					this.dom.gridBox.innerHTML = ''
+					const store = new Store()
+					const audio = store.get('audio')
+					audio.feeds.map(x => this.mkCard(x))
+					this.removeAttribute('mk-all')
+				}
 
 			}
 
@@ -294,7 +300,6 @@
 			}
 
 			addListeners() {
-
 
 				this.ready()
 			}
@@ -370,7 +375,6 @@
 					<img draggable="false" class="card-img" src="${feed.image}"  />
 
 					<div class="card-body">
-						
 						${feed.title}
 						<ul>
 							${lines}
@@ -379,7 +383,7 @@
 				`;
 
 				card.onclick = (e) => {
-
+					
 					const episode = e.target
 					console.log(e.target)
 
@@ -438,13 +442,19 @@
 					const body = card.querySelector('.card-body')
 
 					if (card.classList.contains('card-active')) {
+
 						this.dom.container.style.width = '81%'
 						card.classList.remove('card-active')
+						Array.from(this.root.querySelectorAll('.card')).map(x => x.style.opacity = 1)
+
 
 					} else {
+
 						this.dom.container.style.width = '100%'
 						card.parentElement.prepend(card)
-						setTimeout(() => card.classList.add('card-active'), 0)
+						card.classList.add('card-active')
+						const cards = Array.from(this.root.querySelectorAll('.card')).filter(x => !x.classList.contains('card-active'))
+						cards.map(x => x.style.opacity = 0)
 					}
 
 				}
