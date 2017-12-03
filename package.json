@@ -1,14 +1,14 @@
 {
   "name": "ourrss-desktop",
   "productName": "OurrssDesktop",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "An open RSS player built with open web standards openly...",
   "license": "MIT",
   "repository": "dubyajaysmith/ourrss-desktop",
   "author": {
     "name": "Jamie Smith",
     "email": "i@jamiesmiths.com",
-    "url": "jamiesmiths.com"
+    "url": "https://jamiesmiths.com"
   },
   "scripts": {
     "test": "xo",
