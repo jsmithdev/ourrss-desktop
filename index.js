@@ -71,7 +71,7 @@ ipc.on('getFeed', function (event, url) {
 		
 		if(rss.image){
 			Util.message('Got Feed! Yasss', 'Got Feed! Yasss')
-			const store = new Store();
+			const store = new Store()
 
 			if (!store.get('audio')) {
 				const audio = {}
@@ -87,7 +87,7 @@ ipc.on('getFeed', function (event, url) {
 					console.log(audio.feeds[i].title, ' VS ', rss.title)
 					if (audio.feeds[i].title === rss.title) {
 						console.log('b4 ', audio.feeds.length)
-						audio.feeds.splice(i, 1);
+						audio.feeds.splice(i, 1)
 						console.log('after ', audio.feeds.length)
 
 					}
@@ -107,69 +107,7 @@ ipc.on('getFeed', function (event, url) {
 	}).catch(e => message(e))
 });
 
-
-
 /* 
-const getFeed = () => {
-
-	console.log(`get feed renderer...`);
-
-	const url = document.getElementById('url').value;
-
-	if (!url) {
-		console.error('No URL provided')
-		return false;
-	}
-
-	console.log(`Getting feed: ${url}`);
-	ipc.send('getFeed', url);
-	ipc.once('getFeedRes', function (event, rss) {
-
-		console.log(`Got Feed!`);
-		console.dir(rss)
-
-		const store = new Store();
-
-		if (!store.get('audio')) {
-			const audio = {}
-			audio.feeds = []
-			store.set('audio', audio)
-		}
-
-		const audio = store.get('audio')
-
-		if (audio.feeds.length) {
-
-			for (let i = audio.feeds.length - 1; i--;) {
-				console.log(audio.feeds[i].title, ' VS ', rss.title)
-				if (audio.feeds[i].title == rss.title || audio.feeds[i].title == 'Hound Tall') {
-					console.log('b4 ', audio.feeds.length)
-					audio.feeds.splice(i, 1);
-					console.log('after ', audio.feeds.length)
-
-				}
-			}
-
-			audio.feeds.push(rss)
-
-			store.set('audio', audio)
-		} else {
-			audio.feeds.push(rss)
-			store.set('audio', audio)
-		}
-
-		console.dir(audio)
-
-
-
-		// store.get('unicorn')
-
-		// // Use dot-notation to access nested properties
-		// store.set('foo.bar', true);
-		// console.log(store.get('foo'));
-
-		// store.delete('unicorn');
-		// console.log(store.get('unicorn'));
-	})
-}
- */
+TODOs
+	Feature: impliment customized dialogs via https://electronjs.org/docs/api/dialog
+*/

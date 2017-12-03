@@ -526,7 +526,7 @@
 				this.dom.buffer = this.root.getElementById('buffer')
 				this.dom.progressAmount = this.root.getElementById('progressAmount')
 				this.dom.bufferAmount = this.root.getElementById('bufferAmount')
-				this.dom.paths = Array.from(this.root.querySelector('.path'))
+				this.dom.paths = Array.from(this.root.querySelectorAll('path'))
 
 				this.dom.add = this.root.getElementById('addToOurRSS')
 				this.dom.modal = this.root.ownerDocument.querySelector('ourrss-modal')
@@ -591,11 +591,10 @@
 
 					const msg = {
 						head: `Playing  Cast `,
-						body: `${this.name}. ${this.title}.`
+						body: `${this.name}`
 					}
 
 					ipc.send('message', msg);
-					ipc.once('getFeedRes', (event, data) => console.log('sent play msg ', data))
 
 					// todo fix fail : src error via mobile
 					if ('mediaSession' in navigator) {
@@ -679,7 +678,7 @@
 
 				this.dom.cast.onclick = () => console.log('Chrome Cast is in todo stage')
 
-				this.dom.paths.map(path => path.onclick = path.parentElement.onclick())
+				this.dom.paths.map(path => path.onclick = path.parentElement.onclick)
 
 			}
 

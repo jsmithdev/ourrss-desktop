@@ -7,14 +7,18 @@ const getRSS = (feed) => new Promise((res, rej) =>
 
 module.exports = {
 
-    message: function (mess) {
+
+    getRSS : (feed) => new Promise((res, rej) =>
+        getFeed.load(feed, (e, rss) => e ? rej(e) : res(rss))),
+
+    message: (mess) => {
 
         const Message = require('electron-notify');
         const path = require('path');
 
         Message.setConfig({
             appIcon: path.join(`${__dirname}/img/icon.png`),
-            displayTime: 6000
+            displayTime: 5000
         });
         Message.notify({
             title: mess.head,
@@ -120,10 +124,11 @@ module.exports = {
                 const arr = Object.values(obj)
                 const length = arr.length
                 let n = 0
-                arr.map(x => {
-                    const y = getRSS(x)
+                arr.map(feed => {
+                    const y = getRSS(feed)
                         .then(x => {
                             n++
+                            x.feed = feed
                             audio.feeds.push(x)
                             if(n === length){
                                 store.set('audio', audio)
