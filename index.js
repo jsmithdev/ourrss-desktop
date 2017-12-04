@@ -56,21 +56,18 @@ app.on('ready', () => {
 
 });
 
-
-ipc.on('message', function (event, mess) {
-	const mail = Util.message(mess)
-	event.sender.send('mailSent', mail)
-});
+ipc.on('message', (event, mess) => Util.message(mess))
 
 ipc.on('getFeed', function (event, url) {
-	console.log(url)
+
 	getRSS(url).then(rss => {
+
 		rss.feed = url
-		//console.dir(rss)
+
 		event.sender.send('getFeedRes', rss)
 		
 		if(rss.image){
-			Util.message('Got Feed! Yasss', 'Got Feed! Yasss')
+			Util.message(({ head: 'Feed Fetched', body: `${rss.title}`}))
 			const store = new Store()
 
 			if (!store.get('audio')) {

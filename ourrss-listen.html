@@ -13,7 +13,6 @@
 				font-weight: normal;
 				font-style: normal;
 				font-size: 24px;
-				/* Preferred icon size */
 				display: inline-block;
 				line-height: 1;
 				text-transform: none;
@@ -21,17 +20,7 @@
 				word-wrap: normal;
 				white-space: nowrap;
 				direction: ltr;
-
-				/* Support for all WebKit browsers. */
-				-webkit-font-smoothing: antialiased;
-				/* Support for Safari and Chrome. */
 				text-rendering: optimizeLegibility;
-
-				/* Support for Firefox. */
-				-moz-osx-font-smoothing: grayscale;
-
-				/* Support for IE. */
-				font-feature-settings: 'liga';
 			}
 
 
@@ -199,14 +188,12 @@
 			}
 
 			:host .container {
-				width: 98%;
-				margin-left: 1%;
 				height: auto;
 				/* border: 1pt solid black; */
 			}
 
 			:host .gridContainer {
-				width: 81%;
+				width: 75%;
 				margin: 0 auto;
 				padding-bottom: 8rem;
 				/* border: 1pt solid black; */
@@ -307,7 +294,14 @@
 			}
 
 			addListeners() {
-				this.dom.paths.map(path => path.onclick = path.parentElement.onclick)
+
+				this.dom.paths.map(path => {
+					path.onclick = (e) => {
+						e.cancelBubbles = true
+						e.preventDefault()
+						path.parentElement.click()
+					}
+				})
 				this.ready()
 			}
 
@@ -321,24 +315,8 @@
 					audio.feeds = []
 					store.set('audio', audio)
 				} else {
-
-					//console.dir(audio)
-
-					console.log(`ourrss-listen is ready. Making cards`)
-
-
 					audio.feeds.map(x => this.mkCard(x))
 				}
-			}
-
-			del(e) {
-				if (!e) {
-					console.log('NO EVENT')
-					return false
-				}
-				e.preventDefault()
-				e.cancelBubble()
-				console.log(`delete hit`)
 			}
 
 			mkCard(feed) {
@@ -380,20 +358,20 @@
 
 				card.onclick = (e) => {
 					
-					const episode = e.target
+					const target = e.target
 					//console.log(e.target)
 
-					if (episode.classList.contains('card')) {
+					if (target.classList.contains('card')) {
 
 					}
-					if (episode.classList.contains('refresh')) {
+					if (target.classList.contains('refresh')) {
 
-						const name = episode.dataset.title
-						const feed = episode.dataset.feed
+						const name = target.dataset.title
+						const feed = target.dataset.feed
 
 						const msg = {
 							head : `Refreshing`,
-							body : `${name} updating...`
+							body : `${name}`
 						}
 						ipc.send('message', msg);
 
@@ -402,7 +380,7 @@
 						const getter = Util.getRSS(feed)
 							.then(rss => {
 								
-								const card = episode.parentElement.parentElement
+								const card = target.parentElement.parentElement
 								const ul = card.querySelector('ul')
 								ul.innerHTML = ''
 								ul.classList.add('refresh')
@@ -448,8 +426,8 @@
 
 						return false;
 					}
-					if(episode.classList.contains('delete')){
-						let delElm = episode
+					if(target.classList.contains('delete')){
+						let delElm = target
 						if(delElm.tagName === 'path'){
 							delElm = delElm.parentElement
 						}
@@ -483,18 +461,16 @@
 
 					this.dom.cards.map(x => x.classList.remove('card-active'))
 
-					if (episode.tagName.toLowerCase() === 'li') {
-						console.log('was a li.enc click to play an episode')
+					if (target.tagName.toLowerCase() === 'li') {
 
-						const card = episode.parentElement.parentElement.parentElement
+						const card = target.parentElement.parentElement.parentElement
 						const image = card.querySelector('.card-img')
 
 						this.dom.player.setAttribute('image', image.src)
-						this.dom.player.setAttribute('src', episode.dataset.audio)
-						this.dom.player.setAttribute('name', episode.dataset.name)
-						this.dom.player.setAttribute('title', episode.dataset.title)
+						this.dom.player.setAttribute('src', target.dataset.audio)
+						this.dom.player.setAttribute('name', target.dataset.name)
+						this.dom.player.setAttribute('title', target.dataset.title)
 						this.dom.player.setAttribute('play', true)
-
 
 					}
 
@@ -507,7 +483,7 @@
 
 					if (card.classList.contains('card-active')) {
 
-						this.dom.container.style.width = '81%'
+						this.dom.container.style.width = '75%'
 						card.classList.remove('card-active')
 						Array.from(this.root.querySelectorAll('.card')).map(x => x.style.opacity = 1)
 

@@ -4,12 +4,13 @@
 ![OurRSS-Desktop Screenie](https://i.imgur.com/XEuQjgn.png "OurRSS-Desktop Screenie")
 
 ## State v1.0
-> Radio (randomizer)
+> Radio - play a random cast from feeds followed
 
 > Add, Refresh, Delete, Import & Export Feeds
 
-> Play, Pause & Skip Time : forward & back icons or tap the duration line at the bottom (the width is the duration of the audio)
+> Play, Pause, Volume & Skip Time : forward & back icons or tap the time elapsed at the bottom
 
+['Exported File Example (which can be imported)'](https://gist.github.com/dubyajaysmith/a36a4a14a67221e72c1e7a05ae98910a)
 
 ### Dev
 
