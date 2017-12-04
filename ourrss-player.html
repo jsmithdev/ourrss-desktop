@@ -161,14 +161,14 @@
 
 			:host .volume {
 				vertical-align: middle;
-				display: inline-block;
 				padding-top: 7%;
-				width: 93%;
+				/* width: 99%; */
+    			display: inline;
 			}
 
 			:host input[type=range] {
 				-webkit-appearance: none;
-				max-width: 129px;
+				max-width: 75%;
 			}
 
 			:host input[type=range]:focus {
@@ -196,48 +196,10 @@
 			}
 
 			:host input[type=range]:focus::-webkit-slider-runnable-track {
-				background: #545a5a;
+				background: #555;
 			}
 
-			:host input[type=range]::-moz-range-track {
-				width: 100%;
-				height: 2rem;
-				cursor: pointer;
-				background: #484d4d;
-				border-radius: 0px;
-				border: 0px solid #010101;
-			}
 
-			:host input[type=range]::-ms-track {
-				width: 100%;
-				height: 2rem;
-				cursor: pointer;
-				background: transparent;
-				border-color: transparent;
-				color: transparent;
-			}
-
-			:host input[type=range]::-ms-fill-lower {
-				background: #3c4040;
-				border: 0px solid #010101;
-				border-radius: 0px;
-				box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-			}
-
-			:host input[type=range]::-ms-fill-upper {
-				background: #484d4d;
-				border: 0px solid #010101;
-				border-radius: 0px;
-				box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
-			}
-
-			:host input[type=range]:focus::-ms-fill-lower {
-				background: #484d4d;
-			}
-
-			:host input[type=range]:focus::-ms-fill-upper {
-				background: #545a5a;
-			}
 
 			:host svg {
 				cursor: pointer;
@@ -261,11 +223,11 @@
 			}
 
 			:host .col-1-3 {
-				width: 15%;
+				width: 20%;
 			}
 
 			:host .col-2-3 {
-				width: 70.5%;
+				width: 60%;
 			}
 
 			:host .col-3-3 {
