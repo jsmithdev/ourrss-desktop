@@ -13,7 +13,6 @@
 				font-weight: normal;
 				font-style: normal;
 				font-size: 24px;
-				/* Preferred icon size */
 				display: inline-block;
 				line-height: 1;
 				text-transform: none;
@@ -21,17 +20,7 @@
 				word-wrap: normal;
 				white-space: nowrap;
 				direction: ltr;
-
-				/* Support for all WebKit browsers. */
-				-webkit-font-smoothing: antialiased;
-				/* Support for Safari and Chrome. */
 				text-rendering: optimizeLegibility;
-
-				/* Support for Firefox. */
-				-moz-osx-font-smoothing: grayscale;
-
-				/* Support for IE. */
-				font-feature-settings: 'liga';
 			}
 
 
@@ -305,7 +294,14 @@
 			}
 
 			addListeners() {
-				this.dom.paths.map(path => path.onclick = path.parentElement.onclick)
+
+				this.dom.paths.map(path => {
+					path.onclick = (e) => {
+						e.cancelBubbles = true
+						e.preventDefault()
+						path.parentElement.click()
+					}
+				})
 				this.ready()
 			}
 
@@ -319,24 +315,8 @@
 					audio.feeds = []
 					store.set('audio', audio)
 				} else {
-
-					//console.dir(audio)
-
-					console.log(`ourrss-listen is ready. Making cards`)
-
-
 					audio.feeds.map(x => this.mkCard(x))
 				}
-			}
-
-			del(e) {
-				if (!e) {
-					console.log('NO EVENT')
-					return false
-				}
-				e.preventDefault()
-				e.cancelBubble()
-				console.log(`delete hit`)
 			}
 
 			mkCard(feed) {

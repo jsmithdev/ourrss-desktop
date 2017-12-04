@@ -163,7 +163,7 @@
 				vertical-align: middle;
 				display: inline-block;
 				padding-top: 7%;
-				width: 100%;
+				width: 93%;
 			}
 
 			:host input[type=range] {
@@ -265,7 +265,7 @@
 			}
 
 			:host .col-2-3 {
-				width: 72%;
+				width: 70.5%;
 			}
 
 			:host .col-3-3 {
@@ -311,8 +311,7 @@
 			<div class="grid">
 
 				<div class="col-1-3 ">
-					&nbsp;
-					<span class="volume" style="display:none">
+					<span class="volume" >
 						<svg id="mute" class="small-icon" viewBox="0 0 24 24">
 							<path class="path" fill="#B3E5FC" d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"></path>
 						</svg>
@@ -459,7 +458,11 @@
 							break
 						}
 						case 'volume' : {
-							//this.dom.audio.volume = newVal
+							this.dom.audio.volume = newVal
+							break
+						}
+						case 'mute' : {
+							
 							break
 						}
 						case 'time' : {
@@ -504,6 +507,7 @@
 				this.dom.section = this.root.getElementById('section')
 				this.dom.audio = this.root.getElementById('audio')
 				this.dom.volume = this.root.getElementById('volume')
+				this.dom.mute = this.root.getElementById('mute')
 				this.dom.play = this.root.getElementById('play')
 				this.dom.pause = this.root.getElementById('pause')
 				this.dom.back = this.root.getElementById('back')
@@ -533,46 +537,45 @@
 				this.title = this.getAttribute('title');
 				this.image = this.getAttribute('image');
 				this.type = this.getAttribute('name');
-				//this.dom.audio.volume = this.getAttribute('volume');
+				this.dom.volume.value = this.getAttribute('volume');
 				this.time = this.getAttribute('time');
 				this.src = this.getAttribute('src');
 			}
 
 			addListeners() {
+				
+				this.dom.volume.onchange = () => 
+					this.setAttribute('volume', this.dom.volume.value)
+				
+				this.dom.mute.onclick = (evt) => {
+					evt.cancelBubbles = true
+					evt.preventDefault()
+					
+					this.dom.audio.volume = this.dom.audio.volume === 0 ? 1 : 0
+
+				}
 
 				this.dom.add.onclick = () => {
 					const modal = this.dom.modal
-					if (modal.hasAttribute('hidden')) {
-						modal.removeAttribute('hidden')
-						modal.visible = false
-						modal.active = false
-						modal.title = ''
-						modal.setAttribute('content', 'addFeed')
-					}
-					else {
-						modal.setAttribute('hidden', true)
-						modal.visible = true
-						modal.active = true
-					}
+					modal.visible = true
+					modal.active = true
+					modal.title = ''
+
+					modal.removeAttribute('content')
+					modal.setAttribute('content', 'addFeed')
+					modal.removeAttribute('hidden')
 				}
 
 				this.dom.settings.onclick = () => {
 
 					const modal = this.dom.modal
-					
-					if (modal.hasAttribute('hidden')) {
-						modal.removeAttribute('hidden')
-						modal.visible = false
-						modal.active = false
-						modal.title = ''
-						modal.removeAttribute('content')
-						modal.setAttribute('content', 'settings')
-					}
-					else {
-						modal.setAttribute('hidden', true)
-						modal.visible = true
-						modal.active = true
-					}
+					modal.visible = true
+					modal.active = true
+					modal.title = 'Settings'
+
+					modal.removeAttribute('content')
+					modal.setAttribute('content', 'settings')
+					modal.removeAttribute('hidden')
 				}
 
 
@@ -609,6 +612,7 @@
 
 					//setup player
 					this.dom.audio.play()
+						.catch(x => console.log(`Play caught: ${x}`))
 				}
 
 				this.dom.pause.onclick = () => {
@@ -617,7 +621,9 @@
 					this.dom.pause.classList.toggle('hide')
 				}
 
-				this.dom.expand.onclick = () => {
+				this.dom.expand.onclick = (evt) => {
+					evt ? evt.cancelBubbles = true : ''
+					evt ? evt.preventDefault() : ''
 					this.dom.expand.classList.toggle('expand')
 					this.dom.section.classList.toggle('expand')
 				}
@@ -671,7 +677,13 @@
 				this.dom.cast.onclick = () => ipc.send('message', 
 					{ head: `Chrome Cast is in todo stage`, body: '' })
 				
-				this.dom.paths.map(path => path.onclick = path.parentElement.onclick)
+				this.dom.paths.map(path => {
+					path.onclick = (e) => {
+						e.cancelBubbles = true
+						e.preventDefault()
+						path.parentElement.onclick()
+					}
+				})
 			}
 
 		}
