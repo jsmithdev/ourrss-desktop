@@ -193,21 +193,13 @@
 			setProperties() {
 
 				this.is = 'ourrss-modal'
-				/**
-				* State of the modal
-				* @type {Boolean}
-				*/
+				
 				this.active = {
 					type: Boolean,
 					notify: true,
 					value: false
 				}
-
-				/**
-				* Whether modal is visible
-				* Used for transitions
-				* @type {Boolean}
-				*/
+				
 				this.visible = {
 					type: Boolean,
 					reflectToAttribute: true,
@@ -215,26 +207,12 @@
 					value: false
 				}
 
-				/**
-				* Whether modal is hidden
-				* Used for transitions
-				* @type {Boolean}
-				*/
 				this.hidden = {
 					type: Boolean,
 					reflectToAttribute: true,
 					readonly: true,
 					value: true
 				}
-
-				/**
-				* Title to show on modal
-				* @type {String}
-				*/
-				/* this.title = {
-				  type: String,
-				  value: ''
-				} */
 
 			}
 
@@ -258,10 +236,11 @@
 						break
 					}
 					case 'content': {
-						if (newVal == 'addFeed') {
+						if (newVal === 'addFeed') {
+							console.log('addFeed')
 							this.addFeed()
 						}
-						else if (newVal == 'settings') {
+						else if (newVal === 'settings') {
 							console.log('settings')
 							this.settings()
 						}
@@ -291,7 +270,7 @@
 			parseAttributes() {
 				//this.name = this.getAttribute('name');
 				this.dom.title.textContent = this.getAttribute('title')
-				this.dom.content.innerHTML = this.getAttribute('content')
+				//this.dom.content.innerHTML = this.getAttribute('content')
 
 			}
 
@@ -318,6 +297,7 @@
 					console.log('overlay click')
 
 					this.setAttribute('hidden', true)
+					this.setAttribute('title', '')
 					this.visible = false
 					this.active = false
 					this.dom.modal.classList.remove('settings')
@@ -331,7 +311,11 @@
 
 			//Helpers Below
 			settings() {
+
+				this.removeAttribute('hidden')
 				this.setAttribute('title', 'Settings')
+				this.dom.content.innerHTML = ''
+
 				const cont = document.createElement('div')
 				const html = `<div class="">
 					<a class="export" href="#">Export Feeds</a> : Creates a json file of feeds added.
@@ -355,7 +339,7 @@
 						console.log(path)
 						Util.exportFeeds(path)
 							.then(x => console.log(x))
-							.catch(x => console.log(x)) 
+							.catch(x => console.log(x))
 					}
 					dir.click()
 				}
@@ -368,21 +352,24 @@
 						const path = file.files[0].path
 						console.log(path)
 						Util.importFeeds(path)
-							.then(x =>  this.dom.listen.setAttribute('mk-all', x))
+							.then(x => this.dom.listen.setAttribute('mk-all', x))
 							.catch(x => console.log(x))
 					}
 					file.click()
-					
-					
-					
 				}
 
 				this.dom.modal.classList.add('settings')
+				this.dom.content.innerHTML = ''
 				this.dom.content.appendChild(content)
+				this.removeAttribute('hidden')
 			}
 
 
 			addFeed() {
+				this.removeAttribute('hidden')
+				this.removeAttribute('title')
+				this.dom.content.innerHTML = ''
+
 
 				const add = (e, input) => {
 					e.cancelBubble = true
@@ -413,7 +400,9 @@
 				const input = content.querySelector('input')
 				content.querySelector('button').onclick = (e) => add(e, input)
 
+
 				this.dom.content.appendChild(content)
+				this.removeAttribute('hidden')
 
 
 			}

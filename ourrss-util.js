@@ -17,7 +17,7 @@ module.exports = {
         const path = require('path');
 
         Message.setConfig({
-            appIcon: path.join(`${__dirname}/img/icon.png`),
+            appIcon: path.join(`${__dirname}\\img\\icon.png`),
             displayTime: 5000
         });
         Message.notify({
