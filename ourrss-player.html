@@ -67,6 +67,7 @@
 			}
 
 
+
 			:host #buffered {
 				height: 20px;
 				position: relative;
@@ -114,6 +115,7 @@
 				user-select: none;
 				width: 20%;
 				height: auto;
+				max-height: 2.3rem;
 			}
 
 			:host .medium-icon {
@@ -162,13 +164,13 @@
 			:host .volume {
 				vertical-align: middle;
 				padding-top: 7%;
-				/* width: 99%; */
-    			display: inline;
+				display: flex;
 			}
 
 			:host input[type=range] {
 				-webkit-appearance: none;
 				max-width: 75%;
+				background: #0288d1;
 			}
 
 			:host input[type=range]:focus {
@@ -231,7 +233,7 @@
 			}
 
 			:host .col-3-3 {
-				width: 13%;
+				width: 20%;
 			}
 
 			:host .dark-primary-color {
@@ -273,7 +275,7 @@
 			<div class="grid">
 
 				<div class="col-1-3 ">
-					<span class="volume" >
+					<span class="volume">
 						<svg id="mute" class="small-icon" viewBox="0 0 24 24">
 							<path class="path" fill="#B3E5FC" d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"></path>
 						</svg>
@@ -317,7 +319,7 @@
 			</div>
 
 			<!-- <audio> gets it's data from components attributes via component class -->
-			<audio id="audio" preload="auto" class="hide" ></audio>
+			<audio id="audio" preload="auto" class="hide"></audio>
 
 			<div id="drawer">
 
@@ -405,51 +407,52 @@
 					// 	-newVal:${newVal}
 					// `)
 
-					
+
 					switch (attr) {
 						case 'name': {
 							this.name = newVal
 							break
 						}
-						case 'title' : {
+						case 'title': {
 							this.title = newVal
 							break
 						}
-						case 'type' : {
+						case 'type': {
 							this.type.volume
 							break
 						}
-						case 'volume' : {
+						case 'volume': {
 							this.dom.audio.volume = newVal
+							localStorage['volume'] = newVal
 							break
 						}
-						case 'mute' : {
-							
+						case 'mute': {
+
 							break
 						}
-						case 'time' : {
+						case 'time': {
 							this.dom.audio ? this.dom.audio.currentTime = parseInt(newVal) : ''
 							break
 						}
-						case 'src' : {
+						case 'src': {
 							console.log('src >> ', newVal)
 							this.dom.audio.src = newVal
 							this.src = newVal
 							break
 						}
-						case 'image' : {
+						case 'image': {
 							this.image = newVal
 							this.dom.playdiv.style.backgroundImage = `url(${this.image})`
 							break
 						}
-						case 'play' : {
+						case 'play': {
 							newVal == 'true' ? this.dom.play.onclick() : this.dom.pause.onclick()
 							break
 						}
-						default : {
+						default: {
 							console.error(`ourrss-play attr not handled: ${attr}`)
 						}
-				}
+					}
 				}
 			}
 
@@ -499,20 +502,22 @@
 				this.title = this.getAttribute('title');
 				this.image = this.getAttribute('image');
 				this.type = this.getAttribute('name');
-				this.dom.volume.value = this.getAttribute('volume');
 				this.time = this.getAttribute('time');
 				this.src = this.getAttribute('src');
+				this.dom.volume.value = this.dom.volume.value = localStorage['volume'] ? 
+					this.dom.volume.value = localStorage['volume'] : this.getAttribute('volume')
 			}
 
 			addListeners() {
-				
-				this.dom.volume.onchange = () => 
+
+				this.dom.volume.onchange = () =>
 					this.setAttribute('volume', this.dom.volume.value)
-				
+
 				this.dom.mute.onclick = (evt) => {
-					evt.cancelBubbles = true
-					evt.preventDefault()
-					
+					if (evt) {
+						evt.cancelBubbles = true
+						evt.preventDefault()
+					}
 					this.dom.audio.volume = this.dom.audio.volume === 0 ? 1 : 0
 
 				}
@@ -542,7 +547,7 @@
 
 
 				this.dom.play.onclick = () => {
-					
+
 					//Tweak UI
 					this.dom.playdiv.style.backgroundImage = 'url(' + this.image + ')'
 					this.dom.play.classList.add('hide')
@@ -553,7 +558,7 @@
 					localStorage['audioImg'] = String(this.image);
 					localStorage['audioFeed'] = String(this.src);
 					localStorage['audioName'] = String(this.name);
-					
+
 					// todo fix fail : src error via mobile
 					if ('mediaSession' in navigator) {
 						navigator.mediaSession.metadata = new MediaMetadata({
@@ -601,8 +606,8 @@
 							const episode = feed.items[Math.floor(Math.random() * feed.items.length) + 0]
 
 							let desc = episode.description ? String(episode.description).replace(/<p>|<\/p>/gi, '') : ''
-							
-							
+
+
 							this.setAttribute('image', feed.image)
 							this.setAttribute('src', episode.enclosures[0].url)
 							this.setAttribute('name', episode.title)
@@ -613,37 +618,41 @@
 							}, 1500)
 
 							this.dom.audio.onended = this.dom.radio.onclick
-							
+
 						})
 				}
-				
+
 
 				this.dom.forward.onclick = () =>
-					this.setAttribute('time', parseInt(this.getAttribute('time')) + 30)
+					this.dom.audio.currentTime = this.dom.audio.currentTime + 30
 
 				this.dom.back.onclick = () =>
-					this.setAttribute('time', parseInt(this.getAttribute('time')) - 30)
+					this.dom.audio.currentTime = this.dom.audio.currentTime - 30
 
 
-				this.dom.progress.addEventListener('click', (e) =>
-					this.setAttribute('time', e.pageX * (this.dom.audio.duration / window.innerWidth)))
+				this.dom.progress.onclick = (e) =>
+					this.setAttribute('time', e.pageX * (this.dom.audio.duration / window.innerWidth))
 
-				this.dom.audio.addEventListener('timeupdate', () => {
-					const duration = this.dom.audio.duration;
+				this.dom.audio.ontimeupdate = () => {
+					const duration = this.dom.audio.duration
+					const time = this.dom.audio.currentTime
 					if (duration > 0) {
-						this.dom.progressAmount.style.width = ((this.dom.audio.currentTime / duration) * 100) + "%";
-						localStorage['audioTime'] = String(this.dom.audio.currentTime);
+						this.dom.progressAmount.style.width = `${((time / duration) * 100)}%`
+						localStorage['audioTime'] = time
 					}
-				})
+				}
 
-				this.dom.cast.onclick = () => ipc.send('message', 
-					{ head: `Chrome Cast is in todo stage`, body: '' })
-				
+				this.dom.cast.onclick = () => ipc.send('message',
+					({ head: `Chrome Cast is in todo stage`, body: '' }))
+
 				this.dom.paths.map(path => {
 					path.onclick = (e) => {
 						e.cancelBubbles = true
-						e.preventDefault()
-						path.parentElement.onclick()
+						//e.preventDefault()
+						
+						if (typeof path.parentElement.click === 'function'){
+							path.parentElement.click()
+						}
 					}
 				})
 			}

@@ -8,7 +8,7 @@ const getRSS = (feed) => new Promise((res, rej) =>
 module.exports = {
 
 
-    getRSS : (feed) => new Promise((res, rej) =>
+    getRSS: (feed) => new Promise((res, rej) =>
         getFeed.load(feed, (e, rss) => e ? rej(e) : res(rss))),
 
     message: (mess) => {
@@ -16,9 +16,30 @@ module.exports = {
         const Message = require('electron-notify');
         const path = require('path');
 
+        // #B3E5FC
+        // #0288D1
         Message.setConfig({
+            width: 300,
+            height: 65,
+            padding: 10,
+            borderRadius: 5,
+            displayTime: 5000,
+            animationSteps: 5,
+            animationStepMs: 5,
+            animateInParallel: true,
             appIcon: path.join(`${__dirname}\\img\\icon.png`),
-            displayTime: 5000
+            pathToModule: '',
+            logging: true,
+            defaultStyleContainer: {
+                backgroundColor: '#EEE',
+                overflow: 'hidden',
+                padding: 8,
+                border: '1px solid #CCC',
+                fontFamily: 'Arial',
+                fontSize: 12,
+                position: 'relative',
+                lineHeight: '15px'
+            }
         });
         Message.notify({
             title: mess.head,
@@ -112,10 +133,10 @@ module.exports = {
             const a = {}
             a.feeds = []
             store.set('audio', a)
-            
+
             const audio = store.get('audio')
 
-            const read = (x) => new Promise((res, rej) => 
+            const read = (x) => new Promise((res, rej) =>
                 fs.readFile(file, (err, data) => err ? rej(err) : res(data)))
 
 
@@ -130,7 +151,7 @@ module.exports = {
                             n++
                             x.feed = feed
                             audio.feeds.push(x)
-                            if(n === length){
+                            if (n === length) {
                                 store.set('audio', audio)
                                 resolve(true)
                             }
@@ -141,3 +162,66 @@ module.exports = {
         })
     }
 }
+
+
+/* 
+{
+    width: 300,
+    height: 65,
+    padding: 10,
+    borderRadius: 5,
+    displayTime: 5000,
+    animationSteps: 5,
+    animationStepMs: 5,
+    animateInParallel: true,
+    appIcon: null,
+    pathToModule: '',
+    logging: true,
+    defaultStyleContainer: {
+      backgroundColor: '#f0f0f0',
+      overflow: 'hidden',
+      padding: 8,
+      border: '1px solid #CCC',
+      fontFamily: 'Arial',
+      fontSize: 12,
+      position: 'relative',
+      lineHeight: '15px'
+    },
+    defaultStyleAppIcon: {
+      overflow: 'hidden',
+      float: 'left',
+      height: 40,
+      width: 40,
+      marginRight: 10,
+    },
+    defaultStyleImage: {
+      overflow: 'hidden',
+      float: 'right',
+      height: 40,
+      width: 40,
+      marginLeft: 10,
+    },
+    defaultStyleClose: {
+      position: 'absolute',
+      top: 1,
+      right: 3,
+      fontSize: 11,
+      color: '#CCC'
+    },
+    defaultStyleText: {
+      margin: 0,
+      overflow: 'hidden',
+      cursor: 'default'
+    },
+    defaultWindow: {
+      alwaysOnTop: true,
+      skipTaskbar: true,
+      resizable: false,
+      show: false,
+      frame: false,
+      transparent: true,
+      acceptFirstMouse: true
+    }
+  }
+  
+  */

@@ -5,7 +5,23 @@ body {
 	height: 100%;
 	margin: 0;
 	vertical-align: middle;
+	/* overflow: hidden; */
 }
+
+body::-webkit-scrollbar {
+	width: 1em;
+}
+
+body::-webkit-scrollbar-track {
+	background: #555;
+	-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+body::-webkit-scrollbar-thumb {
+	background-color: #b3e5fc;
+	outline: 1px solid #555;
+}
+
 
 .ourrss-header {
 	text-align: center;
