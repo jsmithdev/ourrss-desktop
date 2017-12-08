@@ -299,10 +299,19 @@
 			attributeChangedCallback(attr, oldVal, newVal) {
 
 				if (newVal) {
-					this.log('-attr: ' + attr + '\n-oldVal: ' + oldVal + ' \n-newVal: ' + newVal)
+					console.log('-attr: ' + attr + '\n-oldVal: ' + oldVal + ' \n-newVal: ' + newVal)
 					'firebase' == attr ? this.firebase = newVal : ''
 					//'src' == attr ? this.dom.audio.src = newVal : ''
 					this.log('LOGIN HAS ATTR')
+
+					if('fireget' === attr){
+						const fire = this.fireGet(firebase.auth().currentUser.uid)
+						console.dir(fire)
+					}
+					if('fireput' === attr){
+						const fire = this.firePut(firebase.auth().currentUser.uid)
+						console.dir(fire)
+					}
 					//this.dump(this.firebase)
 				}
 			}
@@ -416,9 +425,42 @@
 			}
 
 			ready() {
-
+				console.log('RAN')
+				//this.firebaseSync(firebase.auth().currentUser.uid)
 
 			}
+
+			fireGet(uid) {
+				console.log('firePut ', uid)
+				if (uid) {
+					const store = new Store()
+					console.log('Logged into firebase')
+
+					//const audio = store.get('audio')
+					firebase.database().ref(`users/${uid}/feeds`)
+						.once('value').then(snap => {
+						const res = snap.val()
+						console.dir(res)
+					});
+					//audio.feeds.map(x => this.mkCard(x))
+
+				}
+			}
+			firePut(uid) {
+				console.log('fireGet ', uid)
+				if (uid) {
+					console.log('Logged into firebase')
+					const res = firebase.database().ref(`users/${uid}/feeds`)
+					console.dir(res)
+					const store = new Store()
+					const audio = store.get('audio')
+					
+					var updates = {};
+					updates[`users/${uid}/feeds`] = audio;
+					return firebase.database().ref().update(updates);
+				}
+			}
+
 
 		}
 

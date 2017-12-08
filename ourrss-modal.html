@@ -345,12 +345,21 @@
 					<br/><br/>
 					<a class="import" href="#">Import Feeds</a> : Reads an export from other Ourrss instances.
 					<input class="impFile" type="file" style="display:none" />
+					<br/><br/>
+					<a class="fireGet" href="#">Get Firebase</a> : Sync feeds from Firebase
+					<input class="fireGet" type="file" style="display:none" />
+					<br/><br/>
+					<a class="firePut" href="#">Put Firebase</a> : Sync feeds to Firebase
+					<input class="firePut" type="file" style="display:none" />
 				</div>`
+
 				cont.innerHTML = html
 
 				const content = cont.childNodes[0]
 				const exp = content.querySelector('.export')
 				const imp = content.querySelector('.import')
+				const fireGet = content.querySelector('.fireGet')
+				const firePut = content.querySelector('.firePut')
 
 				exp.onclick = (e) => {
 					e.cancelBubble = true
@@ -380,14 +389,22 @@
 					file.click()
 				}
 
+
 				this.dom.modal.classList.add('settings')
 				this.dom.content.innerHTML = ''
 
 				const fire = document.createElement('ourrss-firebase')
-				this.dom.content.appendChild(fire)
+				fire.classList.add('firebase')
 
+
+				fireGet.onclick = (e) => fire.setAttribute('fireGet', true)
+				firePut.onclick = (e) => fire.setAttribute('firePut', true)
+				
+				this.dom.content.appendChild(fire)
 				this.dom.content.appendChild(content)
 				this.removeAttribute('hidden')
+
+
 			}
 
 
