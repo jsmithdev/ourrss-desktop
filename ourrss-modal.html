@@ -87,6 +87,7 @@
 
 			:host .modal::-webkit-scrollbar-track {
 				background: #555;
+				box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
 				-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
 			}
 
@@ -105,7 +106,7 @@
 			}
 
 			:host(:not([visible])) .modal {
-				transform: translateZ(0) scale(0.8, 0.95);
+				transform: translateZ(0) scale(0.9, 0.9);
 				transition: transform 175ms cubic-bezier(0.4, 0.0, 1, 1),
 				opacity 120ms ease;
 			}
@@ -324,7 +325,7 @@
 					this.active = false
 					this.dom.modal.classList.remove('settings')
 					this.dom.content.innerHTML = ''
-
+					this.ownerDocument.body.style.overflow = 'auto'
 				}
 
 				this.parseAttributes()
@@ -334,6 +335,7 @@
 			//Helpers Below
 			settings() {
 
+				this.ownerDocument.body.style.overflow = 'hidden'
 				this.removeAttribute('hidden')
 				this.setAttribute('title', 'Settings')
 				this.dom.content.innerHTML = ''
@@ -377,7 +379,7 @@
 
 				imp.onclick = (e) => {
 					e.cancelBubble = true
-					console.log('Import todo')
+					
 					const file = content.querySelector('.impFile')
 					file.onchange = () => {
 						const path = file.files[0].path
@@ -388,7 +390,6 @@
 					}
 					file.click()
 				}
-
 
 				this.dom.modal.classList.add('settings')
 				this.dom.content.innerHTML = ''
@@ -409,10 +410,11 @@
 
 
 			addFeed() {
+
+				this.ownerDocument.body.style.overflow = 'hidden'
 				this.removeAttribute('hidden')
 				this.removeAttribute('title')
 				this.dom.content.innerHTML = ''
-
 
 				const add = (e, input) => {
 					e.cancelBubble = true

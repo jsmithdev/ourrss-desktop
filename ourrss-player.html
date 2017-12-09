@@ -384,14 +384,12 @@
 			// Fires when an instance of the element is created.
 			createdCallback() {
 				this.setProperties()
-
-				//console.log('instance was created.')
 			}
 
 			setProperties() {
 				this.is = 'ourrss-player'
 			}
-
+ 
 			// Fires when an instance was removed from the document.
 			detachedCallback() {
 				console.log('instance was removed.')
@@ -400,7 +398,7 @@
 			// Fires when an attribute was added, removed, or updated.
 			attributeChangedCallback(attr, oldVal, newVal) {
 
-				if (newVal) {
+				//if (newVal) {
 					// console.log(` ourrss-player attr changed 
 					// 	-attr: ${attr}
 					// 	-oldVal: ${oldVal}
@@ -408,50 +406,50 @@
 					// `)
 
 
-					switch (attr) {
-						case 'name': {
-							this.name = newVal
-							break
-						}
-						case 'title': {
-							this.title = newVal
-							break
-						}
-						case 'type': {
-							this.type.volume
-							break
-						}
-						case 'volume': {
-							this.dom.audio.volume = newVal
-							localStorage['volume'] = newVal
-							break
-						}
-						case 'mute': {
+				switch (attr) {
+					case 'name': {
+						this.name = newVal
+						break
+					}
+					case 'title': {
+						this.title = newVal
+						break
+					}
+					case 'type': {
+						this.type.volume
+						break
+					}
+					case 'volume': {
+						this.dom.audio.volume = newVal
+						localStorage['volume'] = newVal
+						break
+					}
+					case 'mute': {
 
-							break
-						}
-						case 'time': {
-							this.dom.audio ? this.dom.audio.currentTime = parseInt(newVal) : ''
-							break
-						}
-						case 'src': {
-							console.log('src >> ', newVal)
-							this.dom.audio.src = newVal
-							this.src = newVal
-							break
-						}
-						case 'image': {
-							this.image = newVal
-							this.dom.playdiv.style.backgroundImage = `url(${this.image})`
-							break
-						}
-						case 'play': {
-							newVal == 'true' ? this.dom.play.onclick() : this.dom.pause.onclick()
-							break
-						}
-						default: {
-							console.error(`ourrss-play attr not handled: ${attr}`)
-						}
+						break
+					}
+					case 'time': {
+						this.dom.audio ? this.dom.audio.currentTime = parseInt(newVal) : ''
+						break
+					}
+					case 'src': {
+						this.dom.audio.src = newVal
+						this.src = newVal
+						break
+					}
+					case 'image': {
+						this.image = newVal
+						this.dom.playdiv.style.backgroundImage = `url(${this.image})`
+						break
+					}
+					case 'play': {
+						//newVal == 'true' ? this.dom.play.onclick() : this.dom.pause.onclick()
+						this.dom.audio.paused ? 
+							this.dom.play.onclick() : this.dom.pause.onclick()
+						break
+					}
+					default: {
+						console.error(`ourrss-play attr not handled: ${attr}`)
 					}
 				}
 			}
@@ -510,7 +508,7 @@
 
 			addListeners() {
 
-				this.dom.volume.onchange = () =>
+				this.dom.volume.oninput = () =>
 					this.setAttribute('volume', this.dom.volume.value)
 
 				this.dom.mute.onclick = (evt) => {
@@ -655,8 +653,12 @@
 						}
 					}
 				})
+				this.ready()
 			}
 
+			ready() {
+				
+			}
 		}
 
 		if (document.createElement('ourrss-player').constructor !== OurrssPlayer) {

@@ -1,8 +1,8 @@
 /*jshint esversion: 6, laxcomma: true, asi: true*/
-'use strict ';
+'use strict '
 
 const electron = require('electron');
-const Promise = require('promise');
+//const Promis = require('promise');
 const path = require('path');
 const ipc = require('electron').ipcMain;
 const Store = require('electron-store')
