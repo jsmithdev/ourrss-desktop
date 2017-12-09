@@ -12,8 +12,8 @@
 
 	<link href="ourrss-player.html" rel="import" />
 	<link href="ourrss-listen.html" rel="import" />
-	<link href="ourrss-firebase.html"  rel="import" />
-	<link href="ourrss-modal.html"  rel="import" />
+	<link href="ourrss-firebase.html" rel="import" />
+	<link href="ourrss-modal.html" rel="import" />
 
 </head>
 
@@ -26,7 +26,12 @@
 		<i>An open RSS player built with open web standards openly...</i>
 	</div>
 
-	<br/><br/><br/><br/><br/><br/>
+	<br/>
+	<br/>
+	<br/>
+	<br/>
+	<br/>
+	<br/>
 
 	<ourrss-listen></ourrss-listen>
 
@@ -36,8 +41,16 @@
 
 </body>
 <script>
-
+	
 	const player = document.querySelector('ourrss-player')
+
+	document.body.onkeydown = (e) => {
+		if (e.keyCode == 32) {
+			e.preventDefault()
+			player.setAttribute('play', Math.random())
+		}
+	}
+
 	player.setAttribute('name', localStorage['audioName'])
 	player.setAttribute('src', localStorage['audioFeed'])
 	player.setAttribute('image', localStorage['audioImg'])

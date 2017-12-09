@@ -305,12 +305,10 @@
 					this.log('LOGIN HAS ATTR')
 
 					if('fireget' === attr){
-						const fire = this.fireGet(firebase.auth().currentUser.uid)
-						console.dir(fire)
+						this.fireGet(firebase.auth().currentUser.uid)
 					}
 					if('fireput' === attr){
-						const fire = this.firePut(firebase.auth().currentUser.uid)
-						console.dir(fire)
+						this.firePut(firebase.auth().currentUser.uid)
 					}
 					//this.dump(this.firebase)
 				}
@@ -433,31 +431,41 @@
 			fireGet(uid) {
 				console.log('firePut ', uid)
 				if (uid) {
-					const store = new Store()
-					console.log('Logged into firebase')
 
-					//const audio = store.get('audio')
-					firebase.database().ref(`users/${uid}/feeds`)
-						.once('value').then(snap => {
-						const res = snap.val()
-						console.dir(res)
-					});
-					//audio.feeds.map(x => this.mkCard(x))
-
+					firebase.database()
+						.ref(`users/${uid}/`)
+						.once('value')
+						.then(snap => {
+							const obj = snap.val()
+							console.log('WTF >>')
+							console.dir(obj)
+							Util.mergeFeeds(obj)
+								.then(x => ipc.send('message', ({ head: `Pulled Feeds`, body: x })))
+								.catch(e => console.error(e))
+						})
+						.catch(e => console.error(e))
+				}
+				else {
+					ipc.send('message', ({ head: `Not Signed In`, body: 'You can login via Settings in the drawer.' }))
 				}
 			}
 			firePut(uid) {
 				console.log('fireGet ', uid)
 				if (uid) {
+					
 					console.log('Logged into firebase')
-					const res = firebase.database().ref(`users/${uid}/feeds`)
-					console.dir(res)
+										
 					const store = new Store()
 					const audio = store.get('audio')
+					audio.feeds.map(x => x.items.length = 0)
 					
 					var updates = {};
-					updates[`users/${uid}/feeds`] = audio;
-					return firebase.database().ref().update(updates);
+					updates[`users/${uid}`] = audio;
+					
+					console.dir(updates)
+					firebase.database().ref().update(updates)
+						.then(x => ipc.send('message', ({ head: `Synced Feeds`, body: x })))
+						.catch(e => console.error(e))
 				}
 			}
 
@@ -467,6 +475,22 @@
 		if (document.createElement('ourrss-firebase').constructor !== OurrssFirebase) {
 			OurrssFirebase.prototype.owner = (document._currentScript || document.currentScript).ownerDocument;
 			document.registerElement('ourrss-firebase', OurrssFirebase);
+		}
+
+		window.onbeforeunload = () => {
+			
+			const current = {}
+			current.audioImg = localStorage['audioImg']
+			current.audioFeed = localStorage['audioFeed']
+			current.audioName = localStorage['audioName']
+			current.audioTitle = localStorage['audioTitle']
+			current.audioTime = localStorage['audioTime']
+
+			var updates = {};
+			updates[`users/${uid}/current`] = current;
+			//ipc.send('message', ({ head: `Synced ${audio.length} Feeds`, body: '' }))
+
+
 		}
 	</script>
 
