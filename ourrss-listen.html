@@ -385,15 +385,17 @@
 
 				let lines = ''
 
-				feed.items.map(x => {
-					if (x.enclosures) {
+				if (feed.items) {
+					feed.items.map(x => {
+						if (x.enclosures) {
 
-						lines +=
-							`<li class="enc" data-name="${feed.title}" data-title="cast" data-audio="${x.enclosures[0].url}" >
+							lines +=
+								`<li class="enc" data-name="${feed.title}" data-title="cast" data-audio="${x.enclosures[0].url}" >
 								${x.title}<br/>${new Date(x.created).toDateString()}
 							</li>`
-					}
-				});
+						}
+					})
+				}
 
 				const card = document.createElement('div')
 				card.classList.add('card')
