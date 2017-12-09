@@ -171,7 +171,7 @@ module.exports = {
 			const store = new Store()
 			const stored = store.get('audio')
 
-			let i = 0
+			const newFeeds = []
 
 			toMerge.feeds.map(rss => {
 				let hit = false
@@ -181,83 +181,35 @@ module.exports = {
 					}
 				}
 				if (!hit) {
-					i++
-					stored.feeds.push(rss)
+					newFeeds.push(rss)
 				}
 			})
 
-			store.set('audio', stored)
 
-			if (i > 0) {
-				resolve(`Added ${i} Feeds`)
-            }
-            else {
+			if (newFeeds.length > 0) {
+				console.log('NEW FEEDS ', newFeeds.length)
+				console.dir(newFeeds)
+				let i = 0
+				for (let i = 0; i < newFeeds.length; i++) {
+					getRSS(newFeeds[i].feed).then(feed => {
+						i++
+						console.log(i, ' VS ', newFeeds.length)
+						console.dir(feed)
+						stored.feeds.push(feed)
+						if (i === newFeeds.length) {
+							store.set('audio', stored)
+							console.log('finishing... ')
+							console.dir(store.get('audio'))
+							resolve(newFeeds)
+						}
+					})
+					.catch(err => console.error(err))
+				}
+			}
+			else {
 
 				resolve(`Already Up-to-Date`)
 			}
 		})
 	}
 }
-
-
-/* 
-{
-    width: 300,
-    height: 65,
-    padding: 10,
-    borderRadius: 5,
-    displayTime: 5000,
-    animationSteps: 5,
-    animationStepMs: 5,
-    animateInParallel: true,
-    appIcon: null,
-    pathToModule: '',
-    logging: true,
-    defaultStyleContainer: {
-      backgroundColor: '#f0f0f0',
-      overflow: 'hidden',
-      padding: 8,
-      border: '1px solid #CCC',
-      fontFamily: 'Arial',
-      fontSize: 12,
-      position: 'relative',
-      lineHeight: '15px'
-    },
-    defaultStyleAppIcon: {
-      overflow: 'hidden',
-      float: 'left',
-      height: 40,
-      width: 40,
-      marginRight: 10,
-    },
-    defaultStyleImage: {
-      overflow: 'hidden',
-      float: 'right',
-      height: 40,
-      width: 40,
-      marginLeft: 10,
-    },
-    defaultStyleClose: {
-      position: 'absolute',
-      top: 1,
-      right: 3,
-      fontSize: 11,
-      color: '#CCC'
-    },
-    defaultStyleText: {
-      margin: 0,
-      overflow: 'hidden',
-      cursor: 'default'
-    },
-    defaultWindow: {
-      alwaysOnTop: true,
-      skipTaskbar: true,
-      resizable: false,
-      show: false,
-      frame: false,
-      transparent: true,
-      acceptFirstMouse: true
-    }
-  }
-  
-  */

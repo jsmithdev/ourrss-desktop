@@ -239,18 +239,18 @@
 			// Fires when an attribute was added, removed, or updated.
 			attributeChangedCallback(attr, oldVal, newVal) {
 
-				console.log(
+				/* console.log(
 					` ourrss-listen attr changed 
 				 	-attr: ${attr}
 				 	-oldVal: ${oldVal}
 				 	-newVal:${newVal}
-				 `)
+				 `) */
 
 				if ('mk-card' === attr) {
-					console.log(newVal, ' was passed in!')
+					//console.log(newVal, ' was passed in!')
 					const feed = Util.getFeedByName(newVal)
-					console.log('** newCast (listen')
-					console.dir(feed)
+					//console.log('** newCast (listen')
+					//console.dir(feed)
 
 					feed.then(x => this.mkCard(x))
 					feed.catch(x => console.log(`Error: ${x}`))
@@ -359,11 +359,11 @@
 							const audio = store.get('audio')
 
 							for (let i = 0; i < audio.feeds.length; i++) {
-								console.log(audio.feeds[i].title, ' VS ', rss.title)
+								//console.log(audio.feeds[i].title, ' VS ', rss.title)
 								if (audio.feeds[i].title === rss.title) {
-									console.log('b4 ', audio.feeds.length)
+									//console.log('b4 ', audio.feeds.length)
 									audio.feeds.splice(i, 1)
-									console.log('after ', audio.feeds.length)
+									//console.log('after ', audio.feeds.length)
 
 								}
 							}

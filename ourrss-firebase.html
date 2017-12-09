@@ -351,11 +351,9 @@
 				this.dom.signup = this.root.getElementById('signup')
 				this.dom.password = this.root.getElementById('password')
 				this.dom.logout = this.root.getElementById('logout')
-
 				this.dom.form = this.root.querySelector('.form')
 
-				//console.log('login;registerElements ')
-				//console.dir(this.dom.form)
+				this.dom.listen = this.root.ownerDocument.querySelector('ourrss-listen')
 
 				this.addListeners()
 
@@ -440,7 +438,10 @@
 							console.log('WTF >>')
 							console.dir(obj)
 							Util.mergeFeeds(obj)
-								.then(x => ipc.send('message', ({ head: `Pulled Feeds`, body: x })))
+								.then(newFeeds => {
+									newFeeds.map(x => this.dom.listen.setAttribute('mk-card', x.title))
+									ipc.send('message', ({ head: `Pulled Feeds`, body: `Added ${newFeeds.length} Feeds` }))
+								})
 								.catch(e => console.error(e))
 						})
 						.catch(e => console.error(e))
@@ -459,7 +460,7 @@
 					const audio = store.get('audio')
 					audio.feeds.map(x => x.items.length = 0)
 					
-					var updates = {};
+					const updates = {};
 					updates[`users/${uid}`] = audio;
 					
 					console.dir(updates)
@@ -478,18 +479,19 @@
 		}
 
 		window.onbeforeunload = () => {
-			
+
 			const current = {}
 			current.audioImg = localStorage['audioImg']
 			current.audioFeed = localStorage['audioFeed']
 			current.audioName = localStorage['audioName']
-			current.audioTitle = localStorage['audioTitle']
 			current.audioTime = localStorage['audioTime']
+			current.audioTitle = localStorage['audioTitle']
 
-			var updates = {};
+			const updates = {};
 			updates[`users/${uid}/current`] = current;
+			firebase.database().ref().update(updates)
 			//ipc.send('message', ({ head: `Synced ${audio.length} Feeds`, body: '' }))
-
+			alert()
 
 		}
 	</script>
