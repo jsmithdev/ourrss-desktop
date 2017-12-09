@@ -185,26 +185,29 @@ module.exports = {
 				}
 			})
 
-
+			console.log(newFeeds.length, ' newFeeds.length')
 			if (newFeeds.length > 0) {
 				console.log('NEW FEEDS ', newFeeds.length)
 				console.dir(newFeeds)
 				let i = 0
-				for (let i = 0; i < newFeeds.length; i++) {
-					getRSS(newFeeds[i].feed).then(feed => {
-						i++
+				newFeeds.map(x => {
+					getRSS(x.feed).then(feed => {
 						console.log(i, ' VS ', newFeeds.length)
 						console.dir(feed)
 						stored.feeds.push(feed)
-						if (i === newFeeds.length) {
-							store.set('audio', stored)
-							console.log('finishing... ')
-							console.dir(store.get('audio'))
-							resolve(newFeeds)
-						}
+						i++
+						console.log(i, ' newFeed getRSs')
+					})
+					.then(x => {
+						
 					})
 					.catch(err => console.error(err))
-				}
+				})
+				
+				store.set('audio', stored)
+				console.log('finishing... ')
+				console.dir(store.get('audio'))
+				resolve(newFeeds)
 			}
 			else {
 

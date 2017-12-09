@@ -9,7 +9,7 @@ const Store = require('electron-store')
 
 const Util = require('./ourrss-util')
 const getFeed = require('rss-to-json');
-const getRSS = (feed) => new Promise((res, rej) => 
+const getRSS = (feed) => new Promise((res, rej) =>
 	getFeed.load(feed, (e, rss) => e ? rej(e) : res(rss)));
 
 const app = electron.app;
@@ -30,6 +30,9 @@ function createMainWindow() {
 	const win = new electron.BrowserWindow({
 		width: 1000,
 		height: 900,
+		frame: false,
+		resizable: true,
+
 		icon: path.join(`${__dirname}/img/icon.png`)
 	});
 
@@ -65,9 +68,12 @@ ipc.on('getFeed', function (event, url) {
 		rss.feed = url
 
 		event.sender.send('getFeedRes', rss)
-		
-		if(rss.image){
-			Util.message(({ head: 'Feed Fetched', body: `${rss.title}`}))
+
+		if (rss.image) {
+			Util.message(({
+				head: 'Feed Fetched',
+				body: `${rss.title}`
+			}))
 			const store = new Store()
 
 			if (!store.get('audio')) {
@@ -93,13 +99,12 @@ ipc.on('getFeed', function (event, url) {
 				audio.feeds.push(rss)
 
 				store.set('audio', audio)
-			}
-			else {
+			} else {
 				audio.feeds.push(rss)
 				store.set('audio', audio)
 			}
 
-			
+
 		}
 	}).catch(e => message(e))
 });

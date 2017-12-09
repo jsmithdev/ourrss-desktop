@@ -56,7 +56,23 @@
 	player.setAttribute('image', localStorage['audioImg'])
 	player.setAttribute('time', localStorage['audioTime'])
 	player.setAttribute('title', localStorage['audioTitle'])
+	window.onbeforeunload = () => {
 
+		const current = {}
+		current.audioImg = localStorage['audioImg']
+		current.audioFeed = localStorage['audioFeed']
+		current.audioName = localStorage['audioName']
+		current.audioTime = localStorage['audioTime']
+		current.audioTitle = localStorage['audioTitle']
+
+		const updates = {};
+		updates[`users/${uid}/audio/current`] = current;
+		firebase.database().ref().update(updates)
+		alert()
+		//ipc.send('message', ({ head: `Synced ${audio.length} Feeds`, body: '' }))
+		alert()
+
+	}
 </script>
 
 </html>
