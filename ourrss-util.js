@@ -192,22 +192,21 @@ module.exports = {
 				let i = 0
 				newFeeds.map(x => {
 					getRSS(x.feed).then(feed => {
-						console.log(i, ' VS ', newFeeds.length)
-						console.dir(feed)
+						console.log('got feed items')
+
 						stored.feeds.push(feed)
+
 						i++
-						console.log(i, ' newFeed getRSs')
-					})
-					.then(x => {
-						
+						console.log(i, ' VS ', newFeeds.length)
+						if (i === newFeeds.length){
+							store.set('audio', stored)
+							resolve(newFeeds)
+						}
+
 					})
 					.catch(err => console.error(err))
 				})
 				
-				store.set('audio', stored)
-				console.log('finishing... ')
-				console.dir(store.get('audio'))
-				resolve(newFeeds)
 			}
 			else {
 

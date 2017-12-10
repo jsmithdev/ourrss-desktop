@@ -438,15 +438,13 @@
 							console.log('WTF >>')
 							console.dir(obj)
 							Util.mergeFeeds(obj)
-								.then(x => {
-									if(typeof x === 'object'){
-										x.map(x => 
-											this.dom.listen.setAttribute('mk-card', x.title))
+								.then(newFeeds => {
+									if(typeof newFeeds === 'object'){
+										newFeeds.map(x => this.dom.listen.setAttribute('mk-card', x.title))
 										ipc.send('message', ({ head: `Pulled Feeds`, body: `Added ${newFeeds.length} Feeds` }))
-
 									}
 									else {
-										ipc.send('message', ({ head: x, body: `` }))
+										ipc.send('message', ({ head: newFeeds, body: `` }))
 									}
 								})
 								.catch(e => console.error(e))
