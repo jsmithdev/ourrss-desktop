@@ -57,6 +57,22 @@
 	player.setAttribute('time', localStorage['audioTime'])
 	player.setAttribute('title', localStorage['audioTitle'])
 
+	const deviceSync = () => {
+
+		const current = {}
+		current.audioImg = localStorage['audioImg']
+		current.audioFeed = localStorage['audioFeed']
+		current.audioName = localStorage['audioName']
+		current.audioTime = localStorage['audioTime']
+		current.audioTitle = localStorage['audioTitle']
+
+		const updates = {};
+		updates[`users/${uid}/audio/current`] = current;
+		firebase.database().ref().update(updates)
+		//ipc.send('message', ({ head: `Synced ${audio.length} Feeds`, body: '' }))
+		alert()
+
+	}
 </script>
 
 </html>
