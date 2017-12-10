@@ -1,10 +1,14 @@
 # OurRSS Desktop
-### An Open RSS Player Built with Open Web Standards Openly (for Windows, Linux & Mac)
+### An Open RSS Player Built with Open Web Standards Openly (for Windows, Linux & Mac).
 
-## State v1.0.0
-> Radio - Play a random cast from feeds subscribed to
+![OurRSS-Desktop Screenie](https://i.imgur.com/2hFCuT3.png "OurRSS-Desktop Screenie")
 
-> Add, Refresh, Delete, Import & Export Feeds
+## State 
+> Radio - Play a random cast from feeds subscribed to. When that cast ends, it does it again for an endless stream of your favorite casts. Also good for pets while at work 🐶
+
+> Add, Refresh, Delete, Import & Export Feeds.
+
+> Can login to push and pull casts to the cloud. Uses Firebase for backend.
 
 > Play, Pause, Volume, Mute, Skip Time : forward & back icons or tap the time elapsed at the bottom
 
@@ -13,7 +17,6 @@
 ## Install
 [Windows, Linux & Mac Releases are here on GitHub](https://github.com/dubyajaysmith/ourrss-desktop/releases)
 
-![OurRSS-Desktop Screenie](https://i.imgur.com/XEuQjgn.png "OurRSS-Desktop Screenie")
 
 ## License
 All rights reserved.
