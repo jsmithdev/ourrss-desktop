@@ -1,14 +1,6 @@
 <dom-module id="ourrss-listen">
 	<template>
 		<style>
-			/* 
-{ "0": "http://rss.earwolf.com/improv4humans", "1": "https://feed.pippa.io/public/shows/harmontown", "2": "http://rss.earwolf.com/never-not-funny",
-"3": "http://houndtall.nerdistind.libsynpro.com/rss", "4": "http://rss.earwolf.com/spontaneanation-with-paul-f-tompkins",
-"5": "https://feeds.soundcloud.com/users/soundcloud:users:38128127/sounds.rss", "6": "http://feeds.feedburner.com/DougLovesMovies",
-"7": "http://feeds.99percentinvisible.org/99percentinvisible", "8": "https://wtfpod.libsyn.com/rss", "9": "http://feeds.wnyc.org/radiolab",
-"10": "http://feeds.gimletmedia.com/hearreplyall", "11": "http://thedollop.libsyn.com/rss", "12": "http://rss.earwolf.com/how-did-this-get-made"
-}
- */
 
 			:host {
 				font-family: 'Roboto', sans-serif;
@@ -340,8 +332,6 @@
 							ul.innerHTML = ''
 							ul.classList.add('refresh')
 
-							rss.feed = feed
-
 							let lines = ''
 
 							rss.items.map(x => {
@@ -400,7 +390,7 @@
 				const card = document.createElement('div')
 				card.classList.add('card')
 				card.dataset.title = feed.title
-
+				console.dir(feed)
 				card.innerHTML +=
 					`<span class="card-actions">
 						<svg class="delete" data-title="${feed.title}" data-feed="${feed.feed}" style="width:24px;height:24px" viewBox="0 0 24 24">
@@ -431,58 +421,55 @@
 					if (target.classList.contains('refresh')) {
 
 						target.style.transform = 'rotate(360deg)'
+
+						let bool = false
 						const animate = setInterval(() => {
-							target.style.transform = 'rotate(360deg)'
+							bool ?
+								target.style.transform = 'rotate(360deg)' : target.style.transform = 'rotate(360deg)'
+							bool = bool ?
+								false : true
 						}, 500)
 
-						const name = target.dataset.title
-						const feed = target.dataset.feed
+						Util.getFeedByName(target.dataset.title).then(curr => {
 
-						const msg = {
-							head: `Refreshing`,
-							body: `${name}`
-						}
-						ipc.send('message', msg);
+							console.dir(curr)
 
-						console.log(`${name} & ${feed}`)
+							const name = curr.title
+							const feed = curr.feed
 
-						const getter = Util.getRSS(feed)
-							.then(rss => {
+							const msg = {
+								head: `Refreshing ${name}`,
+								body: `${feed}`
+							}
+							ipc.send('message', msg);
+
+							Util.getRSS(feed).then(rss => {
 
 								const card = target.parentElement.parentElement
 								const ul = card.querySelector('ul')
 								ul.innerHTML = ''
 								ul.classList.add('refresh')
 
-								rss.feed = feed
-
 								let lines = ''
 
-								rss.items.map(x => {
-									if (x.enclosures) {
-
-										lines +=
-											`<li class="enc" data-name="${feed.title}" data-title="cast" data-audio="${x.enclosures[0].url}" >
+								rss.items.map(x => 
+									x.enclosures ? 
+										ul.innerHTML += `
+											<li class="enc" data-name="${feed.title}" data-audio="${x.enclosures[0].url}" >
 												${x.title}<br/>${new Date(x.created).toDateString()}
-											</li>`
-									}
-								})
-								ul.innerHTML = lines
+											</li>
+										` : console.log('No enclosures.'))
 
 								const store = new Store()
 								const audio = store.get('audio')
 
 								for (let i = 0; i < audio.feeds.length; i++) {
-									console.log(audio.feeds[i].title, ' VS ', rss.title)
 									if (audio.feeds[i].title === rss.title) {
-										console.log('b4 ', audio.feeds.length)
-										audio.feeds.splice(i, 1)
-										console.log('after ', audio.feeds.length)
-
+										console.log('found')
+										audio.feeds[i].items  = rss.items
 									}
 								}
 
-								audio.feeds.push(rss)
 								store.set('audio', audio)
 								setTimeout(() => {
 									ul.classList.remove('refresh')
@@ -490,6 +477,7 @@
 								}, 1000);
 							})
 							.catch(x => console.log('Error: ', x))
+						})
 
 						return false;
 					}

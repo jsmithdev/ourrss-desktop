@@ -600,11 +600,11 @@
 
 					Util.getAllAudio()
 						.then(x => {
+							
 							const feed = x.feeds[Math.floor(Math.random() * x.feeds.length) + 0]
 							const episode = feed.items[Math.floor(Math.random() * feed.items.length) + 0]
 
 							let desc = episode.description ? String(episode.description).replace(/<p>|<\/p>/gi, '') : ''
-
 
 							this.setAttribute('image', feed.image)
 							this.setAttribute('src', episode.enclosures[0].url)
