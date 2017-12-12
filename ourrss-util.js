@@ -1,7 +1,7 @@
 /*jshint esversion: 6, laxcomma: true, asi: true*/
 const fs = require('fs')
 const Store = require('electron-store')
-const getFeed = require('rss-to-json');
+const getFeed = require('./rss-to-json');
 
 const getRSS = (feed) => new Promise((res, rej) =>
 	getFeed.load(feed, (e, rss) => e ? rej(e) : res(rss)));

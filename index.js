@@ -1,18 +1,19 @@
 /*jshint esversion: 6, laxcomma: true, asi: true*/
-'use strict '
-
+'use strict()'
 const electron = require('electron');
-//const Promis = require('promise');
 const path = require('path');
 const ipc = require('electron').ipcMain;
 const Store = require('electron-store')
 
 const Util = require('./ourrss-util')
-const getFeed = require('rss-to-json');
-const getRSS = (feed) => new Promise((res, rej) =>
-	getFeed.load(feed, (e, rss) => e ? rej(e) : res(rss)));
+const getFeed = require('./rss-to-json');
 
 const app = electron.app;
+
+const getRSS = (feed) => 
+	new Promise((res, rej) =>
+		getFeed.load(feed, (e, rss) => e ? rej(e) : res(rss)));
+
 
 // adds debug features like hotkeys for triggering dev tools and reload
 require('electron-debug')();
@@ -32,7 +33,6 @@ function createMainWindow() {
 		height: 900,
 		frame: false,
 		resizable: true,
-
 		icon: path.join(`${__dirname}/img/icon.png`)
 	});
 
@@ -70,10 +70,12 @@ ipc.on('getFeed', function (event, url) {
 		event.sender.send('getFeedRes', rss)
 
 		if (rss.image) {
+
 			Util.message(({
 				head: 'Feed Fetched',
 				body: `${rss.title}`
 			}))
+
 			const store = new Store()
 
 			if (!store.get('audio')) {
@@ -99,7 +101,9 @@ ipc.on('getFeed', function (event, url) {
 				audio.feeds.push(rss)
 
 				store.set('audio', audio)
+
 			} else {
+
 				audio.feeds.push(rss)
 				store.set('audio', audio)
 			}
