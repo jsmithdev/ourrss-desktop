@@ -4,6 +4,10 @@
 
 ![OurRSS-Desktop Screenie](https://i.imgur.com/2hFCuT3.png "OurRSS-Desktop Screenie")
 
+### An Open RSS Player Built with Open Web Standards Openly (for Windows, Linux & Mac).
+
+![OurRSS-Desktop Screenie](https://i.imgur.com/2hFCuT3.png "OurRSS-Desktop Screenie")
+
 ## State
 
 > Radio - Play a random cast from feeds subscribed to. When that cast ends, it does it again for an endless stream of your casts.
@@ -35,7 +39,6 @@ MIT © [Jamie Smith](http://jamiesmiths.com)
 ```$ npm run build```
 
 Builds the app for macOS, Linux, and Windows using [electron-packager](https://github.com/electron-userland/electron-packager).
-
 
 ### Uses These Open Projects
 
