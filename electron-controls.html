@@ -1,0 +1,119 @@
+<dom-module id="electron-controls">
+	<template>
+		<style>
+
+			:host {
+				user-select: none;
+			}
+			:host .app-button-group {
+				margin-right: -35px;
+				text-align: right;
+				padding-right: 2em;
+				cursor: pointer;
+				float: right;
+			}
+			:host .hide {
+				display: none;
+			}
+			:host img.close {
+				width: 2rem;
+			}
+			:host img.mini {
+				width: 1.75rem;
+			}
+			:host img.maxi, img.restore {
+				width: 1.55rem;
+			}
+
+		</style>
+
+
+		<div class="app-button-group">
+			<img src="resources/minimize.svg" class="mini" title="Minimize" alt="Minimize" />
+			<img src="resources/restore.svg" class="restore hide" title="Restore" alt="Restore" />
+			<img src="resources/maximize.svg" class="maxi" title="Maximize" alt="Maximize" />
+			<img src="resources/close.svg" class="close" title="Close" alt="Close" />
+		</div>
+	</template>
+
+	<script>
+		
+		class ElectronControls extends HTMLElement {
+
+			init() {
+				this.registerElements()
+			}
+
+			setProperties() {
+				this.is = 'electron-controls'
+			}
+
+			// Fires when an instance was removed from the document.
+			detachedCallback() {
+			}
+
+			// Fires when an attribute was added, removed, or updated.
+			attributeChangedCallback(attr, oldVal, newVal) {
+			}
+
+			// Fires when an instance was inserted into the document.
+			attachedCallback() {
+				var template = this.owner.querySelector('template')
+				var clone = document.importNode(template.content, true)
+				this.root = this.createShadowRoot()
+				this.root.appendChild(clone)
+				this.init()
+			}
+
+
+			// Fires when an instance of the element is created.
+			createdCallback() {
+				this.setProperties()
+				this.parseAttributes()
+			}
+
+			parseAttributes() {
+
+			}
+
+			registerElements() {
+
+				this.dom = {}
+				this.dom.restore = this.root.querySelector('.restore')
+				this.dom.mini = this.root.querySelector('.mini')
+				this.dom.maxi = this.root.querySelector('.maxi')
+				this.dom.close = this.root.querySelector('.close')
+
+
+				setTimeout(() => this.addListeners(), 2000)
+			}
+
+			addListeners() {
+				console.dir(this.dom)
+				console.dir(this.dom.restore)
+				this.dom.restore.onclick = () => {
+					this.dom.restore.classList.add('hide')
+					this.dom.maxi.classList.remove('hide')
+					ipc.send('app-restore', true)
+				}
+				this.dom.maxi.onclick = () => {
+					this.dom.maxi.classList.add('hide')
+					this.dom.restore.classList.remove('hide')
+					ipc.send('app-maxi', true)
+				}
+				this.dom.mini.onclick = () => ipc.send('app-mini', true)
+				this.dom.close.onclick = (e) => ipc.send('app-close', true)
+
+				this.ready()
+			}
+
+			ready() {
+			}
+		}
+		if (document.createElement('electron-controls').constructor !== ElectronControls) {
+			ElectronControls.prototype.owner = (document._currentScript || document.currentScript).ownerDocument;
+			document.registerElement('electron-controls', ElectronControls);
+		}
+
+	</script>
+</dom-module>

@@ -376,6 +376,7 @@
 
 		const Util = require('./ourrss-util')
 		const ipc = require('electron').ipcRenderer;
+		//const chromecast = require('electron-chromecast');
 
 		/*global HTMLElement navigator localStorage MediaMetadata*/
 		class OurrssPlayer extends HTMLElement {
@@ -640,9 +641,27 @@
 					}
 				}
 
-				this.dom.cast.onclick = () => ipc.send('message',
-					({ head: `Chrome Cast is in todo stage`, body: '' }))
+				this.dom.cast.onclick = () => {
+					
+					/* const Receiver = chromecast(async (receivers) => {
+						// Do some logic to choose a receiver, possibly ask the user through a UI
+						const chosenReceiver = receivers[0];
 
+						console.log('chosenReceiver 1')
+						console.dir(chosenReceiver)
+
+						console.log('receivers 1')
+						console.dir(receivers)
+
+						return chosenReceiver;
+					});
+
+					
+					console.log('Receiver 1')
+					console.dir(Receiver)
+
+					ipc.send('message', ({ head: `Chrome Cast is in todo stage`, body: '' })) */
+				}
 				this.dom.paths.map(path => {
 					path.onclick = (e) => {
 						e.cancelBubbles = true

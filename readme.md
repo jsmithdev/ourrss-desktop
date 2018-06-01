@@ -20,12 +20,6 @@
 
 [Early Windows, Linux & Mac Releases are here on GitHub](https://github.com/dubyajaysmith/ourrss-desktop/releases)
 
-## License
-
-All rights reserved.
-
-MIT © [Jamie Smith](http://jamiesmiths.com)
-
 ### Dev
 
 ```$ npm install```
@@ -43,8 +37,19 @@ Builds the app for macOS, Linux, and Windows using [electron-packager](https://g
 ### Uses These Open Projects
 
 > [electron](https://github.com/electron/electron)
+
 > [electron-store](https://github.com/sindresorhus/electron-store)
+
 > [electron-notify](https://github.com/hankbao/electron-notify)
+
 > [rss-to-json](https://github.com/nasa8x/rss-to-json) Editied (again) ~~Edited but pull request was accepted~~
+
 > [ourrss-player](https://github.com/dubyajaysmith/ourrss-player) Edited
+
 > [ourrss-listen](https://github.com/dubyajaysmith/ourrss-listen) Edited
+
+## License
+
+All rights reserved.
+
+MIT © [Jamie Smith](http://jamiesmiths.com)

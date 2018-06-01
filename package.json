@@ -1,17 +1,14 @@
 {
-  "name": "ourrss_desktop",
+  "name": "ourrss-desktop",
   "productName": "OurrssDesktop",
   "version": "1.0.0",
   "description": "An open RSS player built with open web standards openly...",
   "license": "MIT",
-  "repository": "dubyajaysmith/ourrss-desktop",
-  "author": {
-    "name": "Jamie Smith",
-    "email": "i@jamiesmiths.com",
-    "url": "https://jamiesmiths.com"
-  },
+  "repository": "https://github.com/dubyajaysmith/ourrss-desktop",
+  "author": "Jamie Smith <i@jamiesmiths.com> (https://jamiesmiths.com)",
   "scripts": {
     "test": "xo",
+    ".": "electron .",
     "start": "electron .",
     "build": "electron-packager . --out=dist --asar --overwrite --all"
   },
@@ -32,7 +29,9 @@
     "electron-notify": "^0.1.0",
     "electron-store": "^1.3.0",
     "modal-vanilla": "^0.3.7",
-    "promise": "^8.0.1"
+    "promise": "^8.0.1",
+    "request": "^2.83.0",
+    "xml2js": "^0.4.19"
   },
   "devDependencies": {
     "devtron": "^1.1.0",
@@ -45,5 +44,6 @@
       "node",
       "browser"
     ]
-  }
+  },
+  "main": "index.js"
 }

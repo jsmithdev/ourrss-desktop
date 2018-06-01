@@ -373,10 +373,11 @@
 					this.dom.form.classList.contains('hideForm') ? this.dom.form.classList.remove('hideForm') : this.dom.form.classList.add('hideForm')
 
 				}
-				this.dom.signup.onclick = function (e) {
+				this.dom.signup.onclick = (e) => {
 					//this.cancelBubble()
 					console.log('SignAnch click')
 					console.dir(this)
+
 					firebase.auth().createUserWithEmailAndPassword(this.dom.email.value, this.dom.password.value)
 						.catch(function (error) {
 							// Handle Errors here.

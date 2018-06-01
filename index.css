@@ -23,20 +23,23 @@ body::-webkit-scrollbar-thumb {
     border: 1px solid #555;
 }
 
-.ourrss-header {
-	cursor: pointer;
+.app-header {
+	padding-left: 1rem;
 	-webkit-app-region: drag;
-	text-align: center;
-	width: 100%;
-	background: #0288D1;
-	color: #FFF;
-	padding-bottom: 1rem;
-	box-shadow: 0 4px 2px -2px rgba(0, 0, 0, 0.2), 0 4px 2px -2px rgba(0, 0, 0, 0.19);
-    position:fixed;
+}
+.ourrss-header {
     top:0;
     width:100%;
 	z-index:90;
+	width: 100%;
+	color: #FFF;
+    position:fixed;
+	cursor: pointer;
+	text-align: center;
+	padding-bottom: 1rem;
 	margin-bottom: 10rem;
+	background: #0288D1;
+	box-shadow: 0 4px 2px -2px rgba(0, 0, 0, 0.2), 0 4px 2px -2px rgba(0, 0, 0, 0.19);
 }
 .ourrss-header img {
 	width:2rem;

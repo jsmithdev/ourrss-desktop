@@ -117,3 +117,8 @@ ipc.on('getFeed', function (event, url) {
 TODOs
 	Feature: impliment customized dialogs via https://electronjs.org/docs/api/dialog
 */
+
+ipc.on('app-close', (ev, arr) => mainWindow.close())
+ipc.on('app-maxi', (ev, arr) => mainWindow.maximize())
+ipc.on('app-mini', (ev, arr) => mainWindow.minimize())
+ipc.on('app-restore', (ev, arr) => mainWindow.unmaximize())
