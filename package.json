@@ -24,7 +24,7 @@
   ],
   "dependencies": {
     "electron-debug": "^1.0.0",
-    "electron-notify": "github:hankbao/electron-notify#master",
+    "electron-notify": "github:dubyajaysmith/electron-notify#master",
     "electron-store": "^1.3.0",
     "modal-vanilla": "^0.3.7",
     "promise": "^8.0.2",
