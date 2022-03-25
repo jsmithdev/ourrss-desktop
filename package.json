@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "devtron": "^1.1.0",
-    "electron": "^9.4.0"
+    "electron": "^13.6.6"
   },
   "main": "index.js"
 }
