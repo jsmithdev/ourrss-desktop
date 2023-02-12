@@ -1,3 +1,16 @@
+
+# Sunset & Archived 🌇
+
+## This project has been sunset but lives on as a progressive web app
+
+You can find the app @ <https://ourss.app>
+
+The app is still open sourced @ <https://github.com/jsmithdev/ourss>
+
+Bye electron, thanks for all the fish :wave: :dolphin:
+
+---
+
 # OurRSS Desktop
 
 ## An Open RSS Player Built with Open Web Standards Openly (for Windows, Linux & Mac)
